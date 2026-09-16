@@ -112,3 +112,34 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# ---------------------------------------------------------------------------
+# Project-specific additions (not part of the upstream Unity template)
+# ---------------------------------------------------------------------------
+
+# Android signing material. Never commit these: the keystore IS the app's
+# signing identity, and this repo has a public remote.
+*.keystore
+*.keystore.meta
+*.jks
+keystore.properties
+
+# OS cruft. The upstream Unity template intentionally omits these; they live
+# in github/gitignore's Global/ templates.
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# IDE / editor state (Rider and VS Code are both wired into this project)
+.idea/
+.vscode/
+
+# Python tooling for the MCP for Unity server (uv / venv artifacts)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Claude Code: share settings.json and agents, keep personal overrides local
+.claude/settings.local.json
