@@ -61,3 +61,57 @@ fails oddly.
 enable OpenXR with Meta Quest Support and the Oculus Touch controller profile
 under Project Settings (MCP cannot reliably drive Project Settings); confirm
 Android Build Support with OpenJDK and SDK/NDK is installed.
+
+---
+
+## 2026-09-16 — XR configuration and MCP connection
+
+**Goal.** Finish setup: OpenXR configured for Quest 3, MCP for Unity
+connected, and a working test harness.
+
+**What changed.**
+
+- OpenXR enabled as the XR provider for Android and Standalone, with Meta
+  Quest Support and the Meta Quest Touch Plus controller profile. Touch Plus
+  is the Quest 3 controller; the Standalone entry covers Play mode over Quest
+  Link. Switching the build target to Android raised min SDK 23 -> 24 and
+  added `USE_INPUT_SYSTEM_POSE_CONTROL` and `USE_STICK_CONTROL_THUMBSTICKS`,
+  which route controller pose and thumbstick data through the Input System —
+  the mechanism interaction will be read through, without the XR Interaction
+  Toolkit.
+- Added `Assets/Scripts/VRBasketball.asmdef` (runtime, references the Input
+  System) and `Assets/Tests/VRBasketball.Tests.asmdef` (EditMode, references
+  the runtime assembly). Gameplay logic lives in the first so tests can reach
+  it without a headset, per the architecture rules.
+- Added a smoke test proving the harness compiles and runs. It passes (1/1)
+  and should be deleted once real scoring tests replace it.
+- Installed GitHub CLI 2.101.0 for the eventual release with the APK.
+
+**Problems worth recording.**
+
+- `com.unity.xr.oculus` was installed by a misclick in XR Plug-in Management.
+  Investigation showed it had only been installed, never made the active
+  provider: `XRGeneralSettingsPerBuildTarget.asset` still referenced
+  OpenXRLoader for both targets and no Oculus loader asset existed. Removing
+  the manifest line was the whole fix. Worth noting because the instinct was
+  to revert every outstanding change, which would have destroyed the correct
+  OpenXR setup Unity had just generated.
+- MCP tools would not load despite the server being healthy. The cause was
+  two entries for the same project in `~/.claude.json`, one with backslashes
+  holding the server config and one with forward slashes holding none; the
+  client resolved to the empty one. The duplicate came from the session
+  changing directories earlier.
+- A first attempt to patch that config with PowerShell's
+  `ConvertFrom-Json`/`ConvertTo-Json` silently dropped 2 of 11 projects,
+  caught by comparing counts against a backup and immediately restored. The
+  round-trip cannot preserve keys that differ only by slash direction or
+  case. A targeted text replacement worked, changing exactly 7 lines.
+
+**Corrections from the human.** Asked for commits to stop: changes are now
+left in the working tree for review, and `CLAUDE.md` was updated so the rule
+survives across sessions.
+
+**Still manual.** Meta's agentic-tools plugin is not installed yet (slash
+commands run in the client, not through the agent). Headset tracking is still
+unverified — that needs a scene with an XR rig, which the court blockout will
+provide.
