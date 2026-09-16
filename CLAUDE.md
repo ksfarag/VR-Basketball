@@ -74,9 +74,10 @@ A feature is not finished until all of these hold:
 1. The Unity console is clean (no errors, no new warnings).
 2. Tests pass: `com.unity.test-framework`, run through MCP.
 3. Scene saved, if the scene changed.
-4. Committed with a message explaining *why*, not just what changed.
-5. `AI_LOG.md` has a new entry: goal, approach, what changed, and anything
+4. `AI_LOG.md` has a new entry: goal, approach, what changed, and anything
    the human asked to be corrected after playtesting.
+5. Handed to the human for review, uncommitted, with a suggested commit
+   message. See **Git** below — committing is not the agent's to do.
 
 ## AI_LOG.md
 
@@ -87,13 +88,15 @@ changed in response. Do not rewrite history to look tidier than it was.
 
 ## Git
 
-- Commit after each working feature. Commits are the undo button, so prefer
-  small and frequent over large and tidy.
-- Never commit: keystores, APKs, `Library/`, or anything else already covered
-  in `.gitignore`. If something in `.gitignore` needs to be committed, ask
-  first.
-- Do not push, force-push, rewrite history, or create releases without being
-  asked.
+- **Do not commit.** Leave changes in the working tree; the human reviews and
+  commits them. This applies even when a task feels finished, and even when
+  the "definition of done" above lists a commit — that step is the human's.
+- Do not stage (`git add`), push, force-push, rewrite history, or create
+  releases. Reading git state (`status`, `diff`, `log`) is fine and expected.
+- When a change is ready, say what changed and what still needs review,
+  and suggest a commit message rather than using one.
+- Never write keystores, APKs, or other ignored artifacts into the repo. If
+  something in `.gitignore` seems to need committing, ask.
 
 ## Playtesting
 
