@@ -11,24 +11,25 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
   m_Name: Readme
-  m_EditorClassIdentifier: 
-  icon: {fileID: 2800000, guid: 727a75301c3d24613a3ebcec4a24c2c8, type: 3}
-  title: URP Empty Template
+  m_EditorClassIdentifier:
+  icon: {fileID: 0}
+  title: VR Basketball
   sections:
-  - heading: Welcome to the Universal Render Pipeline
-    text: This template includes the settings and assets you need to start creating with the Universal Render Pipeline.
-    linkText: 
+  - heading: Project foundation
+    text: Unity 6000.0.58f2. OpenXR, Input System, Android build automation, and
+      project documentation are configured. Gameplay is planned and has not been
+      implemented.
+    linkText:
     url:
-  - heading: URP Documentation
-    text:
-    linkText: Read more about URP
-    url: https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest
-  - heading: Forums
-    text:
-    linkText: Get answers and support
-    url: https://forum.unity.com/forums/universal-render-pipeline.383/
-  - heading: Report bugs
-    text:
-    linkText: Submit a report
-    url: https://unity3d.com/unity/qa/bug-reporting
+  - heading: Start here
+    text: Read README.md, CLAUDE.md, and Docs/ImplementationPlan.md in the project
+      root. Use project-authored grabbing, throwing, movement, and scoring.
+    linkText:
+    url:
+  - heading: Verification
+    text: Use VR Basketball > Automation for tests and Android builds. The setup
+      smoke test is not gameplay coverage; an empty PlayMode suite is incomplete.
+      Headset checks are pending.
+    linkText:
+    url:
   loadedLayout: 1

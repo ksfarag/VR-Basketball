@@ -1,0 +1,8 @@
+{
+  "name": "VRBasketball.EditorAutomation",
+  "rootNamespace": "VRBasketball.EditorAutomation",
+  "references": ["UnityEditor.TestRunner", "UnityEngine.TestRunner", "Unity.XR.OpenXR"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true,
+  "noEngineReferences": false
+}

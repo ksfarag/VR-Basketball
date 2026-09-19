@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable",
+    "deny": [
+      "Edit(./ProjectSettings/ProjectVersion.txt)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git restore *)",
+      "Bash(git checkout *)",
+      "Bash(git rebase *)",
+      "Bash(git merge *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git stash *)",
+      "Bash(git tag *)",
+      "Bash(gh release *)",
+      "Bash(gh pr merge *)",
+      "PowerShell(git add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)",
+      "PowerShell(git reset *)",
+      "PowerShell(git clean *)",
+      "PowerShell(git restore *)",
+      "PowerShell(git checkout *)",
+      "PowerShell(git rebase *)",
+      "PowerShell(git merge *)",
+      "PowerShell(git cherry-pick *)",
+      "PowerShell(git stash *)",
+      "PowerShell(git tag *)",
+      "PowerShell(gh release *)",
+      "PowerShell(gh pr merge *)"
+    ]
+  }
+}

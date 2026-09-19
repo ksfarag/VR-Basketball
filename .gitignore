@@ -143,3 +143,15 @@ __pycache__/
 
 # Claude Code: share settings.json and agents, keep personal overrides local
 .claude/settings.local.json
+
+# Verification and transcript output stays local.
+/TestResults/
+/Artifacts/
+.claude/transcripts/
+# Optional desktop XR tools are installed locally, not distributed with source.
+/.local-tools/
+/Assets/XR/APILayers~/
+/Assets/Resources/PerformanceTestRunInfo.json
+/Assets/Resources/PerformanceTestRunInfo.json.meta
+/Assets/Resources/PerformanceTestRunSettings.json
+/Assets/Resources/PerformanceTestRunSettings.json.meta

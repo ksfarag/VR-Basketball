@@ -1,109 +1,20 @@
-# VR Basketball
+# VR Basketball — project instructions
 
-A VR basketball game for Meta Quest, built in Unity with interaction written
-by hand. Development is agent-driven through MCP for Unity, with playtest
-direction from a human in the headset.
+Use the agreed item in [Docs/ImplementationPlan.md](Docs/ImplementationPlan.md). Read only the references needed for that item; do not load the entire history log at session start.
 
-## Hard constraints
+## Requirements
 
-These are set by the brief. Breaking one invalidates the work, so treat them
-as non-negotiable and stop and ask rather than working around them.
+- Keep **Unity 6000.0.58f2** and the existing OpenXR, XR Plug-in Management, and Input System stack. Retain Unity AI Assistant.
+- Implement grabbing, holding, release/throw physics, and any movement in project code. Do not add XR Interaction Toolkit, Meta Interaction SDK, or samples/frameworks that provide these behaviors. Judge other packages by what they do and whether they support this Editor.
+- Keep scoring and other game rules independent of headset input. Start with one stationary player, ball, and hoop; add scope only when requested.
+- Meta XR Core 205 declares Unity 6000.0.66f2 as its minimum. It is outside the current baseline. Do not change package metadata to evade compatibility checks. The optional standalone desktop Operator setup is described in [Docs/DesktopXR.md](Docs/DesktopXR.md).
 
-- **Unity 6000.0.58f2 exactly.** Do not upgrade the project, and do not edit
-  `ProjectSettings/ProjectVersion.txt`.
-- **OpenXR only.** `com.unity.xr.openxr` and `com.unity.xr.management` provide
-  head/controller tracking and button input. That is all they are used for.
-- **No interaction packages.** Never add, and never suggest adding:
-  - XR Interaction Toolkit (`com.unity.xr.interaction.toolkit`)
-  - Meta Interaction SDK / Meta XR SDKs (`com.meta.xr.*`)
-  - any third-party grab, throw, physics-hands, or locomotion package
-- **Write all interaction by hand.** Grabbing, throwing, release velocity,
-  hand presence, and any locomotion are our own code. This is the point of
-  the exercise, not an obstacle to route around.
-- The Meta Quest agentic-tools plugin will sometimes recommend the Meta
-  Interaction SDK. Decline it and say so.
+## Working loop
 
-If a task looks impossible under these constraints, say so and ask. Do not
-quietly install a package to get unblocked.
+1. Inspect the current project and preserve unrelated edits. Use Unity MCP for scene/prefab work; save assets through Unity rather than editing serialized YAML or guessing GUIDs.
+2. Make one small, reviewable change. Let Unity compile, inspect new console errors, and fix issues relevant to the change.
+3. Run meaningful checks. The Editor's **VR Basketball > Automation** menus work while the project is open; command-line Unity verification requires the Editor closed. See [Docs/Automation.md](Docs/Automation.md). An empty test suite or old APK is not a pass.
+4. Add one concise [AI_LOG.md](AI_LOG.md) entry per meaningful work item: decision, change, actual checks, limitations, and human feedback. Update it as evidence arrives. Do not invent prompts, results, or playtests. Keep private context out of the repository. Put personal observations in [Docs/HumanJournal.md](Docs/HumanJournal.md), marking AI-assisted drafts until reviewed.
+5. Leave changes uncommitted unless the human explicitly authorizes Git actions for that change. Never commit builds, recordings, signing material, credentials, or local tool settings.
 
-## Unity 6 API
-
-Use current APIs. The renamed physics properties are the usual trip-ups:
-
-- `Rigidbody.linearVelocity`, not `velocity`
-- `Rigidbody.linearDamping` / `angularDamping`, not `drag` / `angularDrag`
-- `Object.FindFirstObjectByType<T>()` / `FindAnyObjectByType<T>()`, not
-  `FindObjectOfType<T>()`
-
-Prefer the Input System (`com.unity.inputsystem`) over legacy `Input.*`.
-
-## Architecture
-
-- Small classes, one responsibility each. If a file passes ~200 lines,
-  it probably wants splitting.
-- Components communicate through events (C# `event` / `Action`, or
-  `ScriptableObject` event channels). Avoid deep `GetComponent` chains
-  across unrelated systems.
-- **All tuning values go in `ScriptableObject` configs**, not literals in
-  code and not values only reachable in the Inspector. Throw strength, ball
-  mass, rim bounciness, score timing: these get playtested and changed often,
-  so they need to live somewhere a human can find and edit.
-- Physics code belongs in `FixedUpdate`; input polling in `Update`.
-- Scoring, timing, and other game logic must be testable without a headset:
-  keep it free of direct `XR`/input dependencies so it can run under the
-  Test Framework.
-
-## Working through MCP for Unity
-
-- **After every script change, read the Unity console** and fix all errors
-  and warnings before moving to the next task. Do not batch up changes and
-  check at the end.
-- **Save the scene after editing it** through MCP. Unsaved scene edits are
-  lost on Editor restart and will not appear in git.
-- Use MCP to create and wire GameObjects rather than asking the human to
-  click through the Inspector, except for Project Settings, which MCP cannot
-  reliably drive.
-- If the MCP connection drops, stop and say so. Do not fall back to editing
-  scene or asset YAML by hand: the GUID references break in ways that are
-  hard to see and hard to undo.
-
-## Definition of done, per feature
-
-A feature is not finished until all of these hold:
-
-1. The Unity console is clean (no errors, no new warnings).
-2. Tests pass: `com.unity.test-framework`, run through MCP.
-3. Scene saved, if the scene changed.
-4. `AI_LOG.md` has a new entry: goal, approach, what changed, and anything
-   the human asked to be corrected after playtesting.
-5. Handed to the human for review, uncommitted, with a suggested commit
-   message. See **Git** below — committing is not the agent's to do.
-
-## AI_LOG.md
-
-This is a deliverable, not a nicety: it documents how the AI was directed.
-Append one entry per feature, newest last. Record playtest feedback verbatim
-where possible ("throw is too floaty", "ball clips the rim") along with what
-changed in response. Do not rewrite history to look tidier than it was.
-
-## Git
-
-- **Do not commit.** Leave changes in the working tree; the human reviews and
-  commits them. This applies even when a task feels finished, and even when
-  the "definition of done" above lists a commit — that step is the human's.
-- Do not stage (`git add`), push, force-push, rewrite history, or create
-  releases. Reading git state (`status`, `diff`, `log`) is fine and expected.
-- When a change is ready, say what changed and what still needs review,
-  and suggest a commit message rather than using one.
-- Never write keystores, APKs, or other ignored artifacts into the repo. If
-  something in `.gitignore` seems to need committing, ask.
-
-## Playtesting
-
-Game feel is judged by a human in the headset, and that judgement is not
-something to predict or substitute for. When feedback arrives, change the
-tuning values and say what you changed; do not argue that the physics are
-technically correct.
-
-Quest Link (cable or Air Link) runs Play mode straight to the headset. Build
-an APK only at checkpoints, not to test each change.
+For real-device testing, use [Docs/HeadsetChecks.md](Docs/HeadsetChecks.md). Simulator results are desktop evidence only; headset launch, performance, and throwing feel require actual device checks.

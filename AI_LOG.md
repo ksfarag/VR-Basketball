@@ -1,117 +1,35 @@
-# AI Log
+# AI work and verification log
 
-How this project was built with AI assistance: what was asked for, what the
-agent did, and what had to be corrected. Newest entry last.
+This log records AI-assisted project changes and evidence in implementation order. For each new work item, record the request, decision, changed files, checks actually run, human feedback, and what remains unverified. Do not copy private conversation text or claim a playtest that did not happen. Developer observations belong in [HumanJournal.md](Docs/HumanJournal.md); AI-assisted personal drafts remain marked until reviewed.
 
----
+## Foundation and project structure
 
-## 2026-09-16 — Toolchain and project setup
+**Request and decision.** Prepare instructions, required packages, project structure, and verification before gameplay. Keep Unity **6000.0.58f2**, use OpenXR and the Input System for tracking/input, and write grab, throw, and any movement behavior in project code. The developer chose to retain Unity AI Assistant and review changes before commits.
 
-**Goal.** Get the machine and repo ready for agent-driven Unity development:
-Python and `uv` for the MCP for Unity server, a git baseline, and the XR
-packages the brief allows.
+**Changes.** Started from the Universal 3D template (baseline `117d4ac`) rather than the VR template containing XR Interaction Toolkit. Configured Android and Standalone OpenXR, Meta Quest support, and Touch Plus controller input. Added the runtime and EditMode assemblies, a smoke test, `Assets/Scenes/Gameplay.unity`, the implementation plan, Claude project guidance, ignored build/log/signing paths, and Editor/host test, build, and deployment helpers. The scene remains a scaffold with no rig, ball, hoop, scoring, or reset.
 
-**Approach.** Environment first, then repo hygiene, then packages — so that
-every later change is small and revertible.
+**Checks.** Unity readback confirmed the required Editor, Android/IL2CPP/ARM64 settings, saved Gameplay scene, and no missing scripts. The smoke test passed **1/1**; PlayMode had **0 tests** and was correctly reported as incomplete. Results were written under ignored `Logs/Verification/`.
 
-**What changed.**
+## Android build and automation corrections
 
-- Installed `uv` 0.12.15. Python 3.14.7 was already present, so it was left
-  alone. Also installed Python 3.12.14 via `uv` as a fallback, since some
-  MCP dependencies can lag on the newest Python release.
-- Baseline commit `117d4ac` of the Unity 6000.0.58f2 Universal 3D template
-  (64 files). The VR template was deliberately not used: it ships the XR
-  Interaction Toolkit, which the brief bans.
-- Extended `.gitignore` beyond the upstream Unity template: Android signing
-  material (`*.keystore`, `*.jks`), OS cruft, IDE state, Python venv
-  artifacts, and `.claude/settings.local.json`. The keystore rules matter
-  most — the repo has a public remote, and a leaked keystore cannot be
-  rotated without breaking installed builds.
-- Added the XR stack in `734f989`: `com.unity.xr.management` 4.4.0,
-  `com.unity.xr.openxr` 1.14.3, `com.unity.probuilder` 6.0.9. Versions were
-  checked against Unity's package docs rather than assumed; ProBuilder was
-  first written as 6.0.4 and corrected to 6.0.9.
-- Wrote `CLAUDE.md` (project constraints) and a `code-reviewer` subagent that
-  checks diffs against those constraints before a commit.
+**Observed issue.** The first scaffold build stopped because Active Input Handling was **Both**, which Unity rejected for Android. The build report recorded failure. The setting was changed to **Input System only**, Unity was restarted, and preflight checks were added so this state is rejected before another build.
 
-**Problem worth recording.** `uv python install 3.12` failed repeatedly with
-`Missing expected target directory for Python minor version link`. The cause
-was not uv: directory junctions created anywhere under `AppData\Local` or
-`AppData\Roaming` on this machine can be path-resolved but not enumerated,
-which is the signature of a filter driver (sync client or antivirus)
-intercepting those folders. Fixed by setting
-`UV_PYTHON_INSTALL_DIR=C:\Users\K\.uv\python`, outside the affected tree.
-Worth remembering if another tool that relies on symlinks under AppData
-fails oddly.
+**Verified result.** The corrected scaffold APK built successfully. The report is `Logs/Verification/quest-build.json`; the APK size and SHA-256 were checked against the fresh output, and its merged manifest was inspected for Quest launch, head-tracking, ARM64, and package-ID settings (`Logs/Verification/apk-manifest.txt`). Its 980 warnings were reviewed as existing package/toolchain diagnostics; there were zero build errors and no project C# compile error. The APK is **not a playable game**. No headset install, launch, performance, or human throwing-feel check has occurred.
 
-**Corrections from the human.**
+**Other setup findings.** Unity MCP was connected, and its **Auto-Start Server on Editor Load** preference was enabled locally; startup after an Editor restart has not been confirmed. Unity AI Assistant remains installed but reported `NoSubscription`/connection errors; this did not block project compilation. Test/build outputs are local ignored evidence, so they must be shared separately if needed for review.
 
-- Asked why the commit was not visible in GitHub Desktop. Investigation
-  showed `C:\Workspace\VR Basketball` was not in Desktop's repository list,
-  so it had never been watching the folder — the commit was fine. The repo
-  was also unpushed and `origin` had no branches at all.
-- Asked for less verbose explanations. Noted.
-- Asked whether the packages should have been installed through the Coplay
-  MCP instead. They could not have been: MCP requires a running Unity
-  Editor, and none was open. Editing the manifest directly also produced a
-  reviewable diff, which an MCP-driven install would not have.
-- Declined removing `com.unity.ai.assistant`; it stays.
+## Standalone desktop XR experiment
 
-**Still manual.** Restart Unity Hub so the Editor inherits `uv` on PATH;
-enable OpenXR with Meta Quest Support and the Oculus Touch controller profile
-under Project Settings (MCP cannot reliably drive Project Settings); confirm
-Android Build Support with OpenJDK and SDK/NDK is installed.
+**Decision.** Meta XR Core 203/205 package requirements specify Unity **6000.0.66f2**, above this project's Editor. The inspected Core 201 package had no Operator. Core and Interaction SDKs stayed out of the baseline. Official standalone Meta XR Operator and Simulator binaries were installed under ignored `.local-tools/` and connected through the existing OpenXR API-layer feature. [DesktopXR.md](Docs/DesktopXR.md) describes the local setup.
 
----
+**Checks.** Simulator startup required a Windows App Runtime component; the missing x64 DDLM registration was repaired. In Unity Play mode, Operator reached `XR_SESSION_STATE_FOCUSED`, returned tracked head/controller poses, accepted controller pose and trigger input with readback, and captured the scaffold XR view. A complete automatic Play/stop cycle restored the previous desktop XR state. The project EditMode smoke test was rerun and passed **1/1** after the desktop helper compiled.
 
-## 2026-09-16 — XR configuration and MCP connection
+**Limit.** This verifies desktop inspection and simulated input only. The Core-based Unity AI Tools panel and Android/headset Operator workflow are absent. No gameplay or device performance is proven. The developer supplied Simulator diagnostics, requested concise documentation, and kept changes pending review.
 
-**Goal.** Finish setup: OpenXR configured for Quest 3, MCP for Unity
-connected, and a working test harness.
+## Documentation consolidation
 
-**What changed.**
+**Request.** Reduce AI context cost and make review easier without losing requirements or useful evidence.
 
-- OpenXR enabled as the XR provider for Android and Standalone, with Meta
-  Quest Support and the Meta Quest Touch Plus controller profile. Touch Plus
-  is the Quest 3 controller; the Standalone entry covers Play mode over Quest
-  Link. Switching the build target to Android raised min SDK 23 -> 24 and
-  added `USE_INPUT_SYSTEM_POSE_CONTROL` and `USE_STICK_CONTROL_THUMBSTICKS`,
-  which route controller pose and thumbstick data through the Input System —
-  the mechanism interaction will be read through, without the XR Interaction
-  Toolkit.
-- Added `Assets/Scripts/VRBasketball.asmdef` (runtime, references the Input
-  System) and `Assets/Tests/VRBasketball.Tests.asmdef` (EditMode, references
-  the runtime assembly). Gameplay logic lives in the first so tests can reach
-  it without a headset, per the architecture rules.
-- Added a smoke test proving the harness compiles and runs. It passes (1/1)
-  and should be deleted once real scoring tests replace it.
-- Installed GitHub CLI 2.101.0 for the eventual release with the APK.
+**Change.** Shortened the always-read instructions and README, reduced this log to decisions and actual checks, and moved task-specific procedures into their existing references. Removed duplicate workflow and folder-map documents. Existing gameplay and project settings were not changed in this pass.
 
-**Problems worth recording.**
-
-- `com.unity.xr.oculus` was installed by a misclick in XR Plug-in Management.
-  Investigation showed it had only been installed, never made the active
-  provider: `XRGeneralSettingsPerBuildTarget.asset` still referenced
-  OpenXRLoader for both targets and no Oculus loader asset existed. Removing
-  the manifest line was the whole fix. Worth noting because the instinct was
-  to revert every outstanding change, which would have destroyed the correct
-  OpenXR setup Unity had just generated.
-- MCP tools would not load despite the server being healthy. The cause was
-  two entries for the same project in `~/.claude.json`, one with backslashes
-  holding the server config and one with forward slashes holding none; the
-  client resolved to the empty one. The duplicate came from the session
-  changing directories earlier.
-- A first attempt to patch that config with PowerShell's
-  `ConvertFrom-Json`/`ConvertTo-Json` silently dropped 2 of 11 projects,
-  caught by comparing counts against a backup and immediately restored. The
-  round-trip cannot preserve keys that differ only by slash direction or
-  case. A targeted text replacement worked, changing exactly 7 lines.
-
-**Corrections from the human.** Asked for commits to stop: changes are now
-left in the working tree for review, and `CLAUDE.md` was updated so the rule
-survives across sessions.
-
-**Still manual.** Meta's agentic-tools plugin is not installed yet (slash
-commands run in the client, not through the agent). Headset tracking is still
-unverified — that needs a scene with an XR rig, which the court blockout will
-provide.
+**Check.** Verified the remaining Markdown links and searched for references to removed files. Documentation changes remain uncommitted for developer review.
