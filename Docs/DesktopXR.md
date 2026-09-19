@@ -1,6 +1,6 @@
 # Optional desktop XR preview
 
-This project uses official **standalone** Meta XR Operator and Simulator binaries with OpenXR 1.18.0. The full Meta XR Core SDK is not in the baseline: [Meta's Core release notes](https://developers.meta.com/horizon/downloads/package/meta-xr-core-sdk/203.0/?view=full_width) set a Unity 6000.0.66f2 minimum, while this project uses 6000.0.58f2. This custom desktop route does not provide Core's Unity AI Tools panel or Android instrumentation.
+Meta XR Core SDK **201.0.0** is installed, while this optional desktop preview uses official **standalone** Meta XR Operator and Simulator binaries with OpenXR 1.18.0. Core 201 does not include the integrated Operator panel. [Core 203](https://developers.meta.com/horizon/downloads/package/meta-xr-core-sdk/203.0/?view=full_width) and Core 205 require Unity 6000.0.66f2, above this project's 6000.0.58f2. The standalone route does not provide Android Operator instrumentation.
 
 ## Local setup
 

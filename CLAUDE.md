@@ -7,7 +7,7 @@ Use the agreed item in [Docs/ImplementationPlan.md](Docs/ImplementationPlan.md).
 - Keep **Unity 6000.0.58f2** and the existing OpenXR, XR Plug-in Management, and Input System stack. Retain Unity AI Assistant.
 - Implement grabbing, holding, release/throw physics, and any movement in project code. Do not add XR Interaction Toolkit, Meta Interaction SDK, or samples/frameworks that provide these behaviors. Judge other packages by what they do and whether they support this Editor.
 - Keep scoring and other game rules independent of headset input. Start with one stationary player, ball, and hoop; add scope only when requested.
-- Meta XR Core 205 declares Unity 6000.0.66f2 as its minimum. It is outside the current baseline. Do not change package metadata to evade compatibility checks. The optional standalone desktop Operator setup is described in [Docs/DesktopXR.md](Docs/DesktopXR.md).
+- Meta XR Core 201.0.0 is installed. Core 205 declares Unity 6000.0.66f2 as its minimum, above this project's Editor. Do not change package metadata to evade compatibility checks. The optional standalone desktop Operator setup is described in [Docs/DesktopXR.md](Docs/DesktopXR.md).
 
 ## Working loop
 

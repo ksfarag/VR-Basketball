@@ -20,7 +20,7 @@ This log records AI-assisted project changes and evidence in implementation orde
 
 ## Standalone desktop XR experiment
 
-**Decision.** Meta XR Core 203/205 package requirements specify Unity **6000.0.66f2**, above this project's Editor. The inspected Core 201 package had no Operator. Core and Interaction SDKs stayed out of the baseline. Official standalone Meta XR Operator and Simulator binaries were installed under ignored `.local-tools/` and connected through the existing OpenXR API-layer feature. [DesktopXR.md](Docs/DesktopXR.md) describes the local setup.
+**Decision.** Meta XR Core 203/205 package requirements specify Unity **6000.0.66f2**, above this project's Editor. The inspected Core 201 package had no Operator. Core and Interaction SDKs stayed out of the original baseline. Official standalone Meta XR Operator and Simulator binaries were installed under ignored `.local-tools/` and connected through the existing OpenXR API-layer feature. [DesktopXR.md](Docs/DesktopXR.md) describes the local setup.
 
 **Checks.** Simulator startup required a Windows App Runtime component; the missing x64 DDLM registration was repaired. In Unity Play mode, Operator reached `XR_SESSION_STATE_FOCUSED`, returned tracked head/controller poses, accepted controller pose and trigger input with readback, and captured the scaffold XR view. A complete automatic Play/stop cycle restored the previous desktop XR state. The project EditMode smoke test was rerun and passed **1/1** after the desktop helper compiled.
 
@@ -32,4 +32,10 @@ This log records AI-assisted project changes and evidence in implementation orde
 
 **Change.** Shortened the always-read instructions and README, reduced this log to decisions and actual checks, and moved task-specific procedures into their existing references. Removed duplicate workflow and folder-map documents. Existing gameplay and project settings were not changed in this pass.
 
-**Check.** Verified the remaining Markdown links and searched for references to removed files. Documentation changes remain uncommitted for developer review.
+**Check.** Verified the remaining Markdown links and searched for references to removed files.
+
+## Meta XR Core SDK setup
+
+**Change.** The developer installed Meta XR Core SDK **201.0.0**. Unity added XR Hands **1.7.2** and generated Quest configuration assets and changes to the Android manifest, OpenXR features, and player/render settings. The local standalone Operator remains optional; its machine-specific API-layer registration was removed from saved OpenXR settings.
+
+**Check.** Unity loaded Core 201.0.0, the EditMode smoke test passed **1/1**, and a fresh scaffold APK built with its SHA-256 verified. The build report counted two errors from overlapping build requests; Console readback identified both as preflight errors, while the APK build itself succeeded. No headset or gameplay check has been done, and the custom interaction requirement has not changed.
