@@ -1,6 +1,18 @@
 # VR Basketball
 
-A Unity project for a small Meta Quest basketball game with custom interaction code. **Gameplay is not implemented yet.** The saved `Assets/Scenes/Gameplay.unity` is a setup scaffold, not a playable court.
+A Unity project for a small Meta Quest 3 basketball game with custom interaction code. **Gameplay is not implemented yet.** `Assets/Scenes/Gameplay.unity` has a tracked player rig, input actions, controller models, and a temporary forward target; it has no ball, hoop, or scoring.
+
+Tracking and controller visuals use Meta XR Core's `OVRCameraRig` and `OVRControllerPrefab`, which supply head and hand poses and the animated Quest 3 controller models. Grabbing, throwing, scoring, and any movement remain project code.
+
+## Controls
+
+| Action | Quest Touch control |
+|---|---|
+| Hold ball (left hand) | Left grip |
+| Hold ball (right hand) | Right grip |
+| Reset | Right **B** |
+
+The bindings are in `Assets/Input/BasketballControls.inputactions`. `GameplayInput` on the Player Rig reports them by hand. They are verified in the Simulator and on a Quest 3 over Quest Link; an installed APK has not been tested yet.
 
 Open with **Unity 6000.0.58f2** and its Android Build Support, SDK/NDK, and OpenJDK modules. OpenXR and the Input System target desktop Play mode and Android; Meta XR Core SDK 201.0.0 is installed for Quest setup. Package versions are recorded in `Packages/manifest.json` and `Packages/packages-lock.json`.
 

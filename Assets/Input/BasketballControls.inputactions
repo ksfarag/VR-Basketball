@@ -1,0 +1,75 @@
+{
+    "version": 1,
+    "name": "BasketballControls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "8b3deef3-91b4-46ec-930d-a008951ab423",
+            "actions": [
+                {
+                    "name": "Hold Left",
+                    "type": "Button",
+                    "id": "c464ccca-3049-4048-97d5-b889a6b05bc2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hold Right",
+                    "type": "Button",
+                    "id": "a147391e-1bcc-470c-8fde-6e124d5878a2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reset",
+                    "type": "Button",
+                    "id": "dc53f349-0609-4309-a239-97b7fb751801",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a12832b3-75ca-4615-9f5d-4cbf94176382",
+                    "path": "<XRController>{LeftHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "915030a6-8246-46fc-abd1-4045864d3342",
+                    "path": "<XRController>{RightHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20e23f51-d4c4-477f-87c6-f45960c209b6",
+                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

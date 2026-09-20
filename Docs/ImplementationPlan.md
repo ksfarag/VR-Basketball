@@ -4,9 +4,9 @@ The project currently provides setup and verification tools. Gameplay is still t
 
 ## 1. Custom rig and input
 
-- Create the player root, tracked camera, and left/right controller transforms using OpenXR and the Input System.
+- Create the player root with Meta XR Core's `OVRCameraRig` for the tracked camera and controller anchors, and an `OVRControllerPrefab` per hand for the controller models. Neither carries grab or locomotion logic.
 - Define explicit input actions for holding the ball and reset. Document the selected bindings in the README when they work.
-- Add simple hand or controller visuals. Keep tracking separate from gameplay decisions.
+- Keep tracking separate from gameplay decisions: the rig reports poses, `GameplayInput` reports actions, and game rules read neither the headset nor OVRInput.
 - Add a temporary forward target to establish the player start direction; replace it with the physical hoop in section 3.
 - Start with a stationary player. If movement or turning is requested, implement it in project code without interaction or locomotion packages.
 

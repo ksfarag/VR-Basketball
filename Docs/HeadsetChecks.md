@@ -2,6 +2,8 @@
 
 This checklist applies to an implemented scene and Android build. No headset result is implied by its presence. Record the device model, APK or scene version, observed behavior, and any issue in `AI_LOG.md`.
 
+The target is a **standalone Meta Quest 3** (Android) build. Most day-to-day testing uses Quest Link with normal Unity Play, which is valid evidence for tracking, input, and scene checks; APK launch, Android performance, and standalone behavior still need an installed build.
+
 Before device actions, enumerate connected devices and select the intended serial. For more than one device, keep that selection explicit throughout install, launch, logs, and capture.
 
 ## Tracking and comfort
