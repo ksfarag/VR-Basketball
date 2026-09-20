@@ -263,7 +263,7 @@ namespace VRBasketball
             linear = Vector3.zero;
             angular = Vector3.zero;
 
-            if (held == null || !motion.TryGetVelocity(settings.VelocityWindow, out Vector3 handLinear, out Vector3 handAngular))
+            if (held == null || !motion.TryGetVelocity(settings.VelocityWindow, settings.ReleaseBias, out Vector3 handLinear, out Vector3 handAngular))
                 return;
 
             // A ball held in one hand swings with the wrist, so the wrist adds to the

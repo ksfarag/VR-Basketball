@@ -34,10 +34,12 @@ namespace VRBasketball
         [SerializeField, Range(1f, 200f)] private float maxHoldSpin = 60f;
 
         [Header("Release")]
-        [Tooltip("How much recent hand motion is averaged into the release velocity, in seconds.")]
-        [SerializeField, Range(0.02f, 0.25f)] private float velocityWindow = 0.08f;
-        [Tooltip("Largest number of hand poses kept for that average.")]
-        [SerializeField, Range(4, 64)] private int velocitySamples = 24;
+        [Tooltip("How much of the arm swing the throw is measured from, in seconds. A longer window follows more of the trajectory and less of the last instant.")]
+        [SerializeField, Range(0.02f, 0.4f)] private float velocityWindow = 0.2f;
+        [Tooltip("Where on the swing the throw is read. 0 averages the whole window, so only the arm decides it; 1 follows the swing to the instant of release, which is stronger but tracks the end of the motion more closely.")]
+        [SerializeField, Range(0f, 1f)] private float releaseBias = 0.5f;
+        [Tooltip("Largest number of hand poses kept for that window.")]
+        [SerializeField, Range(4, 128)] private int velocitySamples = 48;
         [Tooltip("Multiplies the estimated throw speed. 1 releases at hand speed.")]
         [SerializeField, Range(0.25f, 3f)] private float throwSpeedScale = 1f;
         [Tooltip("Multiplies the estimated throw spin. 0 releases without spin.")]
@@ -56,6 +58,7 @@ namespace VRBasketball
         public float MaxHoldSpeed => maxHoldSpeed;
         public float MaxHoldSpin => maxHoldSpin;
         public float VelocityWindow => velocityWindow;
+        public float ReleaseBias => releaseBias;
         public int VelocitySamples => velocitySamples;
         public float ThrowSpeedScale => throwSpeedScale;
         public float ThrowSpinScale => throwSpinScale;

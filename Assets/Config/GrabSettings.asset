@@ -14,11 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grabReach: 0.12
   dropOnTrackingLoss: 1
+  holdDistance: 0.11
+  holdSettle: 0.15
+  allowTwoHandedHold: 1
+  twoHandBlend: 0.1
   maxHoldSpeed: 20
   maxHoldSpin: 60
-  velocityWindow: 0.08
-  velocitySamples: 24
-  throwSpeedScale: 1
+  velocityWindow: 0.2
+  releaseBias: 0.5
+  velocitySamples: 48
+  throwSpeedScale: 1.36
   throwSpinScale: 1
-  maxThrowSpeed: 12
+  maxThrowSpeed: 15
   maxThrowSpin: 30

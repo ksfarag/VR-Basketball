@@ -370,14 +370,16 @@ namespace VRBasketball.Tests.PlayMode
             Assert.IsTrue(ball.Body.useGravity);
         }
 
-        // Motion is a straight function of time, so any pair of sampled poses reports
-        // exactly this speed however the frames happen to land.
+        // Motion is a straight function of time, so the fitted swing reports exactly this
+        // speed however the frames happen to land. It runs for longer than the release
+        // window so the whole window is real motion; a hand that had been still for part
+        // of it would be read as still accelerating and throw harder than it is moving.
         private IEnumerator MoveHandForward(float speed)
         {
             Vector3 start = right.transform.position;
             float began = Time.time;
             int frames = 0;
-            while (Time.time - began < 0.15f || frames < 6)
+            while (Time.time - began < 0.25f || frames < 10)
             {
                 right.transform.position = start + (Vector3.forward * (speed * (Time.time - began)));
                 frames++;
@@ -390,7 +392,7 @@ namespace VRBasketball.Tests.PlayMode
             Quaternion start = right.transform.rotation;
             float began = Time.time;
             int frames = 0;
-            while (Time.time - began < 0.15f || frames < 6)
+            while (Time.time - began < 0.25f || frames < 10)
             {
                 right.transform.rotation = Quaternion.AngleAxis(degreesPerSecond * (Time.time - began), Vector3.up) * start;
                 frames++;
