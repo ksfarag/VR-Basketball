@@ -17,6 +17,7 @@ namespace VRBasketball.Tests.PlayMode
         private HandGrabber otherHand;
         private BallRecall recall;
         private Transform returnPoint;
+        private GameObject obstacle;
 
         [SetUp]
         public void SetUp()
@@ -52,6 +53,7 @@ namespace VRBasketball.Tests.PlayMode
             if (otherHand != null) Object.Destroy(otherHand.gameObject);
             if (recall != null) Object.Destroy(recall.gameObject);
             if (returnPoint != null) Object.Destroy(returnPoint.gameObject);
+            if (obstacle != null) Object.Destroy(obstacle);
             if (settings != null) Object.Destroy(settings);
         }
 
@@ -145,6 +147,73 @@ namespace VRBasketball.Tests.PlayMode
             Assert.IsFalse(recall.TryRecall(), "holding a ball must leave the gesture free for something else");
             Assert.IsNull(recall.Returning);
             Assert.AreSame(hand, ball.Holder, "the held ball must not be disturbed");
+        }
+
+        [UnityTest]
+        public IEnumerator ARecalledBallPassesThroughWhateverIsInTheWay()
+        {
+            // A wall across the flight path, a metre thick and swept against, so a ball
+            // that still collided would be stopped by it rather than tunnelling through.
+            ball.Body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obstacle.name = "Obstacle";
+            obstacle.transform.position = new Vector3(0f, 2f, 6f);
+            obstacle.transform.localScale = new Vector3(6f, 4f, 1f);
+            yield return Steps(1);
+
+            Assert.IsTrue(recall.TryRecall());
+            yield return WaitForDelivery();
+
+            Vector3 midpoint = (hand.transform.position + otherHand.transform.position) * 0.5f;
+            Assert.Less(Vector3.Distance(ball.Body.position, midpoint), 0.1f, "the wall should not have stopped the ball short of the hands");
+        }
+
+        [UnityTest]
+        public IEnumerator ARecalledBallIsIntangibleOnTheWayInAndSolidOnArrival()
+        {
+            SphereCollider collider = ball.GetComponent<SphereCollider>();
+            Assert.IsTrue(collider.enabled, "the ball starts solid");
+
+            Assert.IsTrue(recall.TryRecall());
+            Assert.IsFalse(collider.enabled, "it should stop colliding the moment it is called");
+
+            yield return Steps(3);
+            Assert.IsFalse(collider.enabled, "and stay that way for the whole trip");
+
+            yield return WaitForDelivery();
+            Assert.IsTrue(collider.enabled, "arriving makes it solid again");
+        }
+
+        [UnityTest]
+        public IEnumerator ACancelledRecallGivesTheBallItsColliderBack()
+        {
+            SphereCollider collider = ball.GetComponent<SphereCollider>();
+            Assert.IsTrue(recall.TryRecall());
+            yield return Steps(2);
+            Assert.IsFalse(collider.enabled, "the ball should be part way in and intangible");
+
+            // Switching the caller off part way is the cancel path.
+            recall.enabled = false;
+            yield return Steps(1);
+
+            Assert.IsNull(recall.Returning, "the call should have been given up");
+            Assert.IsFalse(ball.InTransit);
+            Assert.IsTrue(collider.enabled, "a cancelled call must leave the ball as solid as it found it");
+            Assert.IsTrue(ball.Body.useGravity, "and falling rather than hanging where it was abandoned");
+        }
+
+        [UnityTest]
+        public IEnumerator ABallSwitchedOffMidFlightKeepsItsCollider()
+        {
+            SphereCollider collider = ball.GetComponent<SphereCollider>();
+            Assert.IsTrue(recall.TryRecall());
+            yield return Steps(2);
+            Assert.IsFalse(collider.enabled);
+
+            ball.gameObject.SetActive(false);
+
+            Assert.IsFalse(ball.InTransit, "a ball that cannot be delivered is no longer on its way");
+            Assert.IsTrue(collider.enabled, "it must not come back to life able to pass through the floor");
         }
 
         [UnityTest]

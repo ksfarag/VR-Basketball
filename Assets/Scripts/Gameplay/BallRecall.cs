@@ -7,8 +7,9 @@ namespace VRBasketball
     /// hands brings the ball in: it homes to the point between the hands and is put into
     /// them on arrival. While it is on its way no hand can snatch it, so it always lands
     /// centred between both controllers rather than stopping at whichever one it grazed
-    /// first. The gesture is ignored while a ball is held, so holding with both hands
-    /// stays free to mean something else.
+    /// first. It passes through anything standing in the way on the trip in and turns
+    /// solid again on arrival. The gesture is ignored while a ball is held, so holding
+    /// with both hands stays free to mean something else.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BallRecall : MonoBehaviour
@@ -99,6 +100,7 @@ namespace VRBasketball
             elapsed = 0f;
             // The ball coasts back under our control rather than falling on the way, and
             // is reserved so no hand takes it part way and leaves it off to one side.
+            // Marking it in transit is also what lifts its colliders for the trip.
             ball.InTransit = true;
             ball.Body.useGravity = false;
             ball.Body.angularVelocity = Vector3.zero;
@@ -122,7 +124,7 @@ namespace VRBasketball
         private void OnDisable()
         {
             if (returning != null)
-                Finish("recall cancelled");
+                Finish("recall cancelled", true);
             bothHeldLastFrame = false;
         }
 

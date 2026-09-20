@@ -13,10 +13,14 @@ namespace VRBasketball
     public sealed class Ball : MonoBehaviour
     {
         private static readonly List<Ball> active = new List<Ball>();
+        private static readonly List<Collider> foundColliders = new List<Collider>();
+
+        private readonly List<Collider> suspended = new List<Collider>();
 
         private Rigidbody body;
         private SphereCollider sphere;
         private bool gravityWhenFree;
+        private bool inTransit;
 
         /// <summary>The hand that owns this ball, or null when it is free.</summary>
         public HandGrabber Holder { get; private set; }
@@ -38,9 +42,26 @@ namespace VRBasketball
         /// <summary>
         /// True while something else is carrying the ball to a destination. Hands leave an
         /// in-transit ball alone rather than snatching it part way, so it can be delivered
-        /// where it was headed.
+        /// where it was headed. The ball's colliders are switched off for the trip, so a
+        /// rim, a wall, or a player standing on the line cannot knock it off course or
+        /// stop it short, and they come back however the trip ends.
         /// </summary>
-        public bool InTransit { get; set; }
+        public bool InTransit
+        {
+            get => inTransit;
+            set
+            {
+                if (inTransit == value)
+                    return;
+
+                inTransit = value;
+
+                if (value)
+                    SuspendColliders();
+                else
+                    RestoreColliders();
+            }
+        }
 
         public Rigidbody Body
         {
@@ -208,6 +229,37 @@ namespace VRBasketball
             gravityWhenFree = body.useGravity;
         }
 
+        // Children are included because the ball's art may bring colliders of its own.
+        private void SuspendColliders()
+        {
+            GetComponentsInChildren(true, foundColliders);
+            suspended.Clear();
+
+            for (int i = 0; i < foundColliders.Count; i++)
+            {
+                Collider collider = foundColliders[i];
+                if (collider == null || !collider.enabled)
+                    continue;
+
+                collider.enabled = false;
+                suspended.Add(collider);
+            }
+        }
+
+        // Only what this switched off is switched back on, so a collider disabled for its
+        // own reasons is not turned on by a trip that had nothing to do with it.
+        private void RestoreColliders()
+        {
+            for (int i = 0; i < suspended.Count; i++)
+            {
+                Collider collider = suspended[i];
+                if (collider != null)
+                    collider.enabled = true;
+            }
+
+            suspended.Clear();
+        }
+
         // Awake does not run outside Play mode, so anything reading the ball resolves its
         // own components first.
         private void EnsureComponents()
@@ -226,9 +278,12 @@ namespace VRBasketball
         private void OnDisable()
         {
             active.Remove(this);
-            // A disabled ball cannot be carried; holders notice the cleared owner.
+            // A disabled ball cannot be carried or delivered; holders notice the cleared
+            // owner, and the trip ends here rather than leaving the ball to come back
+            // without its colliders.
             Holder = null;
             Support = null;
+            InTransit = false;
             Body.useGravity = gravityWhenFree;
         }
     }
