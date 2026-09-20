@@ -88,19 +88,26 @@ namespace VRBasketball.Tests
             Assert.Greater(hole, ballRadius,
                 $"the ball ({ballRadius * 2f:F3} m across) must fit through the ring ({hole * 2f:F3} m across at its narrowest)");
 
-            // Regulation is a hole 1.91 times the ball across. Much wider than that and the
-            // game stops asking anything of the shot.
+            // Regulation is a hole 1.91 times the ball across, and the developer could not
+            // score on it in a real session, so the shipped hoop is deliberately wider than
+            // the rule. The upper bound is what keeps that a concession rather than a
+            // surrender: the arena hoop rejected in plan item 3 was 3.5 times the ball
+            // across, which asks nothing of a shot.
             float ratio = hole / ballRadius;
-            Assert.That(ratio, Is.InRange(1.7f, 2.2f),
+            Assert.That(ratio, Is.InRange(1.7f, 2.8f),
                 $"the hole is {ratio:F2} times the ball across; regulation is about 1.91");
         }
 
         [Test]
-        public void TheShippedRingSitsAtTheRegulationHeightAndDistanceFromTheBoard()
+        public void TheShippedRingSitsAtAPlayableHeightAndTheRegulationDistanceFromTheBoard()
         {
             CourtSettings settings = LoadSettings();
 
-            Assert.AreEqual(3.048f, settings.RimHeight, 0.01f, "the top of the ring is ten feet up");
+            // Ten feet is 3.048, and it was too high to score on standing still with VR
+            // throw physics. The band runs from a youth hoop up to the rule, so the height
+            // can be tuned for feel without anyone dropping the ring to chest level.
+            Assert.That(settings.RimHeight, Is.InRange(2.3f, 3.05f),
+                $"the ring is {settings.RimHeight:F3} m up; regulation is 3.048");
             Assert.AreEqual(settings.RimHeight - settings.RimTubeRadius, settings.RimCentreHeight, 1e-6f,
                 "the tube's centre hangs one tube radius below its top edge");
 
