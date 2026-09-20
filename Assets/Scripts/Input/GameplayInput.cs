@@ -28,6 +28,13 @@ namespace VRBasketball
 
         public bool IsHolding(Hand hand) => HoldAction(hand).IsPressed();
 
+        /// <summary>
+        /// Whether the reset control is down right now. <see cref="ResetPressed"/> reports
+        /// the press; this is how long it is being held for, so a press and a long press can
+        /// mean different things without the action itself having to know about either.
+        /// </summary>
+        public bool IsResetting => reset != null && reset.action != null && reset.action.IsPressed();
+
         private InputAction HoldAction(Hand hand) => (hand == Hand.Left ? holdLeft : holdRight).action;
 
         private void OnEnable()

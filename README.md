@@ -10,7 +10,8 @@ Tracking and controller visuals use Meta XR Core's `OVRCameraRig` and `OVRContro
 |---|---|
 | Hold ball (left hand) | Left grip |
 | Hold ball (right hand) | Right grip |
-| Reset | Right **B** |
+| Put the ball back | Right **B** (tap) |
+| Clear the score | Right **B** (hold ~1 s) |
 | Hold with both hands | Both grips, while one hand has the ball |
 | Call the ball back | Both grips, with empty hands |
 
@@ -22,6 +23,12 @@ A `HandGrabber` under each hand anchor picks up the nearest eligible `Ball` when
 
 A second hand can take hold of a ball the other is already holding. It becomes a *support* rather than a second owner, so exactly one hand ever owns the ball: the ball eases to the point between the hands, a throw is measured from that point, letting go with the owning hand hands the ball over instead of dropping it, and the ball is only thrown once both hands let go. Turn `allowTwoHandedHold` off in the settings asset for the old single-hand behaviour.
 
+## Reset
+
+A tap of **B** puts every ball back at the `Ball Start` point in front of the player and **keeps the score**, so recovering from a fumble costs nothing. It works whatever the ball is doing: in mid-flight, being carried back by a recall, or held in a fist that is still closed — the ball stops being the hand's rather than the hand being asked to let go, which is what stops a reset launching the ball with the throw the player was in the middle of. Holding **B** for about a second *also* clears the score to 0; that is how a session is started fresh, and the long press is deliberate enough not to happen by accident. Every hoop's pending shot is forgotten on a reset, so carrying the ball back down past a ring is not a basket.
+
+Reset and recall do different jobs: **B** puts the ball back on the court, both grips bring a loose ball to your hands. Automatic recovery of a ball that leaves the playable area is *not* implemented — the temporary bounds walls keep the ball in, and recall fetches it from anywhere if one escapes.
+
 `BallRecall` on the Player Rig calls a loose ball back when both grips are squeezed with empty hands. It homes to the point between the hands and follows them as they move, and because the grips are still held it is picked up on arrival, ending in a two-handed hold. It can be caught early on the way in, and if nothing takes it, it falls. The gesture is ignored while a ball is held. This is a testing convenience for now; proper reset and recovery arrive in plan item 5.
 
 ## Scoring
@@ -30,7 +37,7 @@ A basket is a downward crossing of the ring's plane inside the hole, judged on t
 
 `BasketDetector` is the rule on its own, with no scene, physics, or input behind it. `BasketSensor` on the ring feeds it ball positions at physics timing and announces each basket; `ScoreKeeper` counts them, at `pointsPerBasket` each; `Scoreboard` shows the total on a three-digit seven-segment readout resting on top of the backboard, and marks a basket by turning the lit bars green, swelling the board briefly, and playing a chime. None of this reads the headset or the controls, so every scoring rule is checked in the EditMode suite without a device. Rebuild the court after changing a dimension and the sensor and readout are rebuilt and rewired with it.
 
-The court is built from `Assets/Config/CourtSettings.asset` at regulation figures with two deliberate exceptions, made after a playtest where a regulation hoop proved too hard to score on standing still: `rimHeight` is **2.7 m** rather than 3.048, and `rimInnerRadius` is **0.3 m** rather than 0.2286, which makes the hole 2.49 ball-widths across against a regulation 1.91. `backboardBottomHeight` moved down with the ring so the board keeps the same relationship to it. Change either number and run **VR Basketball > Court > Rebuild Court**; the ring, board, post, scoring radius, and readout are all re-derived from the asset.
+The court is built from `Assets/Config/CourtSettings.asset` at regulation figures with two deliberate exceptions, made after a playtest where a regulation hoop proved too hard to score on standing still: `rimHeight` is **2.7 m** rather than 3.048, and `rimInnerRadius` is **0.32 m** rather than 0.2286, which makes the hole 2.65 ball-widths across against a regulation 1.91. `backboardBottomHeight` moved down with the ring so the board keeps the same relationship to it. Change either number and run **VR Basketball > Court > Rebuild Court**; the ring, board, post, scoring radius, and readout are all re-derived from the asset.
 
 Open with **Unity 6000.0.58f2** and its Android Build Support, SDK/NDK, and OpenJDK modules. OpenXR and the Input System target desktop Play mode and Android; Meta XR Core SDK 201.0.0 is installed for Quest setup. Package versions are recorded in `Packages/manifest.json` and `Packages/packages-lock.json`.
 

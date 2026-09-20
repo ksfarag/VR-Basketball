@@ -212,6 +212,23 @@ namespace VRBasketball
         }
 
         /// <summary>
+        /// Takes the ball off whatever hands have hold of it, without throwing it. This is
+        /// how a reset gets a ball out of a fist that is still closed: no hand is asked to
+        /// let go, the ball simply stops being theirs, and each hand notices on its next
+        /// physics step that the ball it was carrying is no longer held by it.
+        ///
+        /// Asking the hand to let go instead would measure the throw the player was in the
+        /// middle of and apply it a step later, from wherever the reset had just put the
+        /// ball.
+        /// </summary>
+        public void ForceRelease()
+        {
+            Holder = null;
+            Support = null;
+            Body.useGravity = gravityWhenFree;
+        }
+
+        /// <summary>
         /// Puts a free ball back under gravity. Used by anything that moved the ball
         /// under its own control and has finished with it.
         /// </summary>

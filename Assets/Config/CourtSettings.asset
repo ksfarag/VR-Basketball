@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CourtSettings
   m_EditorClassIdentifier: 
   rimHeight: 2.7
-  rimInnerRadius: 0.3
+  rimInnerRadius: 0.32
   rimTubeRadius: 0.01
   rimSegments: 24
   backboardWidth: 1.8

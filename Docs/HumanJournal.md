@@ -21,3 +21,13 @@ I played the scene with scoring in place and scored. I noticed the board gave me
 What I actually found was that scoring at all was hard: the hoop needed to be bigger and it was too high. I asked for both to change. See the [AI log](../AI_LOG.md) entry "Playtest: the regulation hoop was too hard to score on" for what was changed and by how much.
 
 I have not yet said whether the score is readable while shooting, whether the chime lands at the right moment, or whether the flash is noticeable.
+
+## Scoring and reset work on the headset
+
+**AI-assisted draft — pending developer review.**
+
+I tested in VR and it passes. That covers the scoring and reset work from plan items 4 and 5; before this, neither had been confirmed on a device.
+
+I asked for the hoop to be a little bigger again, having played the version with a 0.6 m hole at 2.7 m. See the [AI log](../AI_LOG.md) entry "Headset: scoring and reset pass, and the hoop goes up again".
+
+I have not yet given an opinion on throw feel, whether the score is readable while shooting, whether the chime lands at the right moment, whether the flash is noticeable, or whether holding B to clear the score matches what I expect.
