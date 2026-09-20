@@ -23,7 +23,7 @@ MonoBehaviour:
   velocityWindow: 0.2
   releaseBias: 0.5
   velocitySamples: 48
-  throwSpeedScale: 1.36
+  throwSpeedScale: 1.7
   throwSpinScale: 1
   maxThrowSpeed: 15
   maxThrowSpin: 30
