@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f2a7761250a92478d611b1f77980fe, type: 3}
+  m_Name: CourtSettings
+  m_EditorClassIdentifier: 
+  rimHeight: 3.048
+  rimInnerRadius: 0.2286
+  rimTubeRadius: 0.01
+  rimSegments: 24
+  backboardWidth: 1.8
+  backboardHeight: 1.05
+  backboardThickness: 0.05
+  backboardBottomHeight: 2.9
+  rimGapFromBackboard: 0.15
+  courtWidth: 15.24
+  courtLength: 15
+  baselineToBackboard: 1.2
+  baselineRunOff: 2.5
+  floorThickness: 0.2
+  wallHeight: 2.5
+  wallThickness: 0.2
