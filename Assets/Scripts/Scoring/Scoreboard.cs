@@ -50,11 +50,19 @@ namespace VRBasketball
         [Tooltip("Sound of a basket. A short chime is generated when left empty, so the board is not silent before there is any audio to use.")]
         [SerializeField] private AudioClip basketSound;
 
+        [Header("Six Point Easter Egg")]
+        [Tooltip("World-space canvas placed on the backboard and shown when the score reaches six points.")]
+        [SerializeField] private CanvasGroup easterEggCanvas;
+        [SerializeField] private AudioClip easterEggSound;
+        [SerializeField, Min(0f)] private float easterEggHold = 3f;
+        [SerializeField, Min(0.01f)] private float easterEggFade = 0.35f;
+
         private Vector3 restScale;
         private AudioClip chime;
         private float flashRemaining;
         private int shown = -1;
         private bool showingFlash;
+        private float easterEggRemaining;
 
         /// <summary>Score shown here. Assign before enabling.</summary>
         public ScoreKeeper Score
@@ -79,6 +87,20 @@ namespace VRBasketball
 
         /// <summary>True while a basket is still being marked.</summary>
         public bool IsFlashing => flashRemaining > 0f;
+
+        public bool IsShowingEasterEgg => easterEggCanvas != null && easterEggCanvas.gameObject.activeSelf;
+
+        public CanvasGroup EasterEggCanvas
+        {
+            get => easterEggCanvas;
+            set => easterEggCanvas = value;
+        }
+
+        public AudioClip EasterEggSound
+        {
+            get => easterEggSound;
+            set => easterEggSound = value;
+        }
 
         /// <summary>Materials the bars take when lit, when unlit, and just after a basket.</summary>
         public void SetMaterials(Material lit, Material dim, Material flash)
@@ -116,6 +138,7 @@ namespace VRBasketball
             // in the Editor.
             shown = -1;
             flashRemaining = 0f;
+            HideEasterEgg();
             Render(score.Score, false);
         }
 
@@ -125,21 +148,29 @@ namespace VRBasketball
                 score.Changed -= OnScoreChanged;
 
             flashRemaining = 0f;
+            HideEasterEgg();
             transform.localScale = restScale;
         }
 
         private void Update()
         {
-            if (flashRemaining <= 0f)
-                return;
+            if (flashRemaining > 0f)
+            {
+                flashRemaining = Mathf.Max(0f, flashRemaining - Time.deltaTime);
+                float left = flashDuration <= 0f ? 0f : flashRemaining / flashDuration;
+                transform.localScale = restScale * (1f + flashSwell * left);
+                if (flashRemaining <= 0f)
+                    Render(shown, false);
+            }
 
-            flashRemaining = Mathf.Max(0f, flashRemaining - Time.deltaTime);
-
-            float left = flashDuration <= 0f ? 0f : flashRemaining / flashDuration;
-            transform.localScale = restScale * (1f + flashSwell * left);
-
-            if (flashRemaining <= 0f)
-                Render(shown, false);
+            if (easterEggRemaining > 0f)
+            {
+                easterEggRemaining = Mathf.Max(0f, easterEggRemaining - Time.deltaTime);
+                if (easterEggRemaining <= 0f)
+                    HideEasterEgg();
+                else if (easterEggRemaining < easterEggFade)
+                    SetEasterEggAlpha(easterEggRemaining / easterEggFade);
+            }
         }
 
         private void OnScoreChanged(int total, int change)
@@ -151,26 +182,55 @@ namespace VRBasketball
             {
                 // A reset is a change, not a celebration: show it and stop marking.
                 flashRemaining = 0f;
+                HideEasterEgg();
                 transform.localScale = restScale;
                 return;
             }
 
             flashRemaining = flashDuration;
             transform.localScale = restScale * (1f + flashSwell);
-            Play();
+            bool easterEgg = total == 6;
+            if (easterEgg)
+                ShowEasterEgg();
+            Play(easterEgg);
         }
 
-        private void Play()
+        private void Play(bool easterEgg)
         {
             if (speaker == null)
                 return;
 
-            if (chime == null)
-                chime = Chime();
-
-            AudioClip clip = basketSound != null ? basketSound : chime;
+            AudioClip clip = easterEgg && easterEggSound != null ? easterEggSound : basketSound;
+            if (clip == null)
+            {
+                if (chime == null)
+                    chime = Chime();
+                clip = chime;
+            }
             if (clip != null)
                 speaker.PlayOneShot(clip);
+        }
+
+        private void ShowEasterEgg()
+        {
+            if (easterEggCanvas == null)
+                return;
+
+            easterEggRemaining = easterEggHold + easterEggFade;
+            SetEasterEggAlpha(1f);
+            easterEggCanvas.gameObject.SetActive(true);
+        }
+
+        private void HideEasterEgg()
+        {
+            easterEggRemaining = 0f;
+            if (easterEggCanvas != null)
+                easterEggCanvas.gameObject.SetActive(false);
+        }
+
+        private void SetEasterEggAlpha(float alpha)
+        {
+            easterEggCanvas.alpha = Mathf.Clamp01(alpha);
         }
 
         private void Render(int value, bool flash)

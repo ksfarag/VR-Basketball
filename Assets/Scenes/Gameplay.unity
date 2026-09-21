@@ -1083,6 +1083,10 @@ MonoBehaviour:
   flashSwell: 0.08
   speaker: {fileID: 1929370498}
   basketSound: {fileID: 0}
+  easterEggCanvas: {fileID: 1531105032}
+  easterEggSound: {fileID: 8300000, guid: 1291d116ee4181845aa5ea7fb49f31f1, type: 3}
+  easterEggHold: 3
+  easterEggFade: 0.35
 --- !u!1 &184720686
 GameObject:
   m_ObjectHideFlags: 0
@@ -2016,6 +2020,7 @@ GameObject:
   m_Component:
   - component: {fileID: 600823992}
   - component: {fileID: 600823991}
+  - component: {fileID: 600823993}
   m_Layer: 0
   m_Name: Ring
   m_TagString: Untagged
@@ -2078,6 +2083,19 @@ Transform:
   - {fileID: 87993667}
   m_Father: {fileID: 966248062}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &600823993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600823990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9353b7333430174fa6cca57c9fabcf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scorePrefab: {fileID: 19860484, guid: 66938d1916f526c44a83cc6bc5832e83, type: 3}
 --- !u!1 &633223220
 GameObject:
   m_ObjectHideFlags: 0
@@ -2852,6 +2870,7 @@ Transform:
   - {fileID: 600823992}
   - {fileID: 12507936}
   - {fileID: 1929370497}
+  - {fileID: 1531105031}
   m_Father: {fileID: 1384959592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &985805024
@@ -3903,6 +3922,78 @@ CapsuleCollider:
   m_Height: 0.1545414
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1419630247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1419630248}
+  - component: {fileID: 1419630250}
+  - component: {fileID: 1419630249}
+  m_Layer: 0
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1419630248
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419630247}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1531105031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1419630249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419630247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: 78c49b7038be3084b96fbe32decc36cb, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &1419630250
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419630247}
+  m_CullTransparentMesh: 1
 --- !u!1 &1433593686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4234,6 +4325,79 @@ MonoBehaviour:
   tracked: {fileID: -8528280571520325282, guid: b9e5a785bd3e64944ade7759c93be638, type: 3}
   viewReference: {fileID: 1581510070}
   logGrabs: 1
+--- !u!1 &1531105030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1531105031}
+  - component: {fileID: 1531105033}
+  - component: {fileID: 1531105032}
+  m_Layer: 0
+  m_Name: Easter Egg Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1531105031
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531105030}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.39760002}
+  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1419630248}
+  m_Father: {fileID: 966248062}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 3.2043}
+  m_SizeDelta: {x: 1700, y: 1120}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1531105032
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531105030}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!223 &1531105033
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531105030}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 1
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &1531335754
 GameObject:
   m_ObjectHideFlags: 0
@@ -5039,6 +5203,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 966248062}
     m_Modifications:
+    - target: {fileID: 5753027032236867432, guid: f9334c011b8523f4d8263871f66d718d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6113117434088857277, guid: f9334c011b8523f4d8263871f66d718d, type: 3}
       propertyPath: m_Name
       value: Hoop Mesh

@@ -105,6 +105,10 @@ namespace VRBasketball
             ball.Body.useGravity = false;
             ball.Body.angularVelocity = Vector3.zero;
 
+            BallEffects effects = ball.GetComponent<BallEffects>();
+            if (effects != null)
+                effects.PlayRecallSound();
+
             if (logRecalls)
                 Debug.Log($"[BallRecall] calling {ball.name} back from {from:F2}", this);
 

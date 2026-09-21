@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,6 +33,9 @@ namespace VRBasketball
         public HandGrabber Support { get; private set; }
 
         public bool IsHeld => Holder != null;
+
+        /// <summary>Raised when the last hand releases this ball with its throw velocity.</summary>
+        public event Action<Vector3> Thrown;
 
         /// <summary>True while both hands have hold of the ball.</summary>
         public bool IsHeldWithBothHands => Holder != null && Support != null;
@@ -208,6 +212,7 @@ namespace VRBasketball
             Body.useGravity = gravityWhenFree;
             body.linearVelocity = linearVelocity;
             body.angularVelocity = angularVelocity;
+            Thrown?.Invoke(linearVelocity);
             return true;
         }
 

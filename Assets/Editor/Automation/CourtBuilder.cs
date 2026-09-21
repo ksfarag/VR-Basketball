@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VRBasketball.EditorAutomation
 {
@@ -32,6 +33,9 @@ namespace VRBasketball.EditorAutomation
         private const string PackMaterials = "Assets/MarpaStudio/Built-In/Materials/";
         private const string ArenaHoopPrefab = "Assets/MarpaStudio/Built-In/Prefabs/Ring.prefab";
         private const string ArenaNetPrefab = "Assets/MarpaStudio/Built-In/Prefabs/Net.prefab";
+        private const string ScoreEffectPrefab = "Assets/Prefabs/Effects/Score Burst.prefab";
+        private const string EasterEggImage = "Assets/Textures/NoMoreAirBalls.png";
+        private const string EasterEggSound = "Assets/Audio/NoMoreAirBalls.mp3";
 
         // Where the pack's hoop keeps its parts, measured off its mesh rather than guessed.
         // Its rim sits at this offset from the prefab's own origin and the hoop faces its
@@ -267,9 +271,35 @@ namespace VRBasketball.EditorAutomation
             if (dressed)
                 Invisible(backboard);
 
+            GameObject easterEgg = new GameObject("Easter Egg Canvas", typeof(RectTransform),
+                typeof(Canvas), typeof(CanvasGroup));
+            Undo.RegisterCreatedObjectUndo(easterEgg, "Rebuild Court");
+            RectTransform canvasRect = easterEgg.GetComponent<RectTransform>();
+            canvasRect.SetParent(hoop.transform, false);
+            canvasRect.localPosition = new Vector3(0f,
+                s.BackboardBottomHeight + s.BackboardHeight * 0.5f,
+                s.RimCentreToBackboardFace - 0.16f);
+            canvasRect.localScale = Vector3.one * 0.001f;
+            canvasRect.sizeDelta = new Vector2(s.BackboardWidth * 1000f, s.BackboardHeight * 1000f);
+            easterEgg.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+            Dynamic(easterEgg);
+
+            GameObject eggImage = new GameObject("Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+            Undo.RegisterCreatedObjectUndo(eggImage, "Rebuild Court");
+            RectTransform imageRect = eggImage.GetComponent<RectTransform>();
+            imageRect.SetParent(canvasRect, false);
+            imageRect.anchorMin = Vector2.zero;
+            imageRect.anchorMax = Vector2.one;
+            imageRect.offsetMin = Vector2.zero;
+            imageRect.offsetMax = Vector2.zero;
+            RawImage eggGraphic = eggImage.GetComponent<RawImage>();
+            eggGraphic.texture = AssetDatabase.LoadAssetAtPath<Texture2D>(EasterEggImage);
+            eggGraphic.raycastTarget = false;
+            easterEgg.SetActive(false);
+
             BasketSensor sensor = BuildRing(hoop.transform, s, ring, dressed);
             BuildPost(hoop.transform, s, board, dressed);
-            BuildScoreboard(hoop.transform, s, score, board);
+            BuildScoreboard(hoop.transform, s, score, board, easterEgg.GetComponent<CanvasGroup>());
 
             score.Sensors = new[] { sensor };
         }
@@ -310,6 +340,10 @@ namespace VRBasketball.EditorAutomation
             // home; only the hole comes from the dimensions the ring was built to.
             BasketSensor sensor = ring.AddComponent<BasketSensor>();
             sensor.PassRadius = s.RimInnerRadius;
+            HoopEffects effects = ring.AddComponent<HoopEffects>();
+            effects.ScorePrefab = AssetDatabase.LoadAssetAtPath<ParticleSystem>(ScoreEffectPrefab);
+            if (effects.ScorePrefab == null)
+                Debug.LogWarning("Score effect prefab not found at " + ScoreEffectPrefab);
             return sensor;
         }
 
@@ -317,7 +351,8 @@ namespace VRBasketball.EditorAutomation
         /// A seven-segment readout resting on top of the backboard, where it is in the
         /// shooter's view of the hoop rather than somewhere they have to look away to.
         /// </summary>
-        private static void BuildScoreboard(Transform hoop, CourtSettings s, ScoreKeeper score, PhysicsMaterial surface)
+        private static void BuildScoreboard(Transform hoop, CourtSettings s, ScoreKeeper score, PhysicsMaterial surface,
+            CanvasGroup easterEggCanvas)
         {
             float width = ScoreDigits * DigitWidth + (ScoreDigits - 1) * DigitGap + PanelMargin * 2f;
             float height = DigitHeight + PanelMargin * 2f;
@@ -375,6 +410,8 @@ namespace VRBasketball.EditorAutomation
             display.Score = score;
             display.Digits = digits;
             display.Speaker = speaker;
+            display.EasterEggCanvas = easterEggCanvas;
+            display.EasterEggSound = AssetDatabase.LoadAssetAtPath<AudioClip>(EasterEggSound);
             display.SetMaterials(lit, dim, flash);
         }
 

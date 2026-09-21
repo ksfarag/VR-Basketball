@@ -95,6 +95,74 @@ namespace VRBasketball.Tests.PlayMode
                 "and the ball should be below the ring, not sitting on it");
         }
 
+        [UnityTest]
+        public IEnumerator SixPointsShowsTheBackboardImageThenFadesItOut()
+        {
+            yield return LoadScene();
+
+            ScoreKeeper score = Object.FindFirstObjectByType<ScoreKeeper>();
+            Scoreboard board = Object.FindFirstObjectByType<Scoreboard>();
+            Assert.IsNotNull(board.EasterEggCanvas);
+            Assert.IsNotNull(board.EasterEggSound);
+            Assert.IsFalse(board.IsShowingEasterEgg);
+
+            score.AddBasket();
+            score.AddBasket();
+            Assert.IsFalse(board.IsShowingEasterEgg, "the image should wait until six points");
+
+            GameObject cameraObject = new GameObject("Backboard camera check");
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.enabled = false;
+            camera.fieldOfView = 60f;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.transform.position = board.EasterEggCanvas.transform.position + new Vector3(0f, -1.6f, -3f);
+            camera.transform.LookAt(board.EasterEggCanvas.transform.position);
+            RenderTexture target = new RenderTexture(256, 256, 24);
+            Texture2D pixels = new Texture2D(256, 256, TextureFormat.RGB24, false);
+            camera.targetTexture = target;
+            Color32[] before = Capture(camera, target, pixels);
+
+            score.AddBasket();
+            Assert.AreEqual(6, score.Score);
+            Assert.IsTrue(board.IsShowingEasterEgg);
+            Assert.IsTrue(board.Speaker.isPlaying, "the six-point audio should play");
+
+            Color32[] after = Capture(camera, target, pixels);
+            int changedPixels = 0;
+            for (int y = 70; y < 185; y++)
+            for (int x = 70; x < 185; x++)
+            {
+                int index = y * 256 + x;
+                Color32 a = before[index];
+                Color32 b = after[index];
+                if (Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b) > 60)
+                    changedPixels++;
+            }
+            Assert.Greater(changedPixels, 500, "the image must actually appear in a player-height camera view");
+            Object.Destroy(cameraObject);
+            Object.Destroy(target);
+            Object.Destroy(pixels);
+
+            yield return new WaitForSeconds(3.1f);
+            Assert.IsTrue(board.IsShowingEasterEgg, "the image should stay up for three seconds");
+            Assert.Less(board.EasterEggCanvas.alpha, 1f, "the image should begin fading after three seconds");
+
+            yield return new WaitForSeconds(0.4f);
+            Assert.IsFalse(board.IsShowingEasterEgg, "the image should disappear after its quick fade");
+        }
+
+        private static Color32[] Capture(Camera camera, RenderTexture target, Texture2D pixels)
+        {
+            camera.Render();
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = target;
+            pixels.ReadPixels(new Rect(0f, 0f, 256f, 256f), 0, 0);
+            pixels.Apply();
+            RenderTexture.active = previous;
+            return pixels.GetPixels32();
+        }
+
         private static IEnumerator LoadScene()
         {
             yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
