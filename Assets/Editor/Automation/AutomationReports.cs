@@ -28,6 +28,8 @@ namespace VRBasketball.EditorAutomation
     {
         public string status = "running";
         public string unityVersion = Application.unityVersion;
+        public string productName;
+        public int androidVersionCode;
         public string[] scenes = Array.Empty<string>();
         public string outputPath;
         public string sha256;

@@ -88,13 +88,13 @@ namespace VRBasketball.EditorAutomation
         private const float PanelMargin = 0.09f;
         private const float PanelDepth = 0.06f;
 
-        [MenuItem("VR Basketball/Court/Rebuild Court")]
+        [MenuItem("Airball Arena VR/Court/Rebuild Court")]
         public static void Rebuild()
         {
             CourtSettings settings = LoadSettings();
             if (settings == null)
             {
-                Debug.LogError("No CourtSettings asset found. Create one from Assets > Create > VR Basketball > Court Settings.");
+                Debug.LogError("No CourtSettings asset found. Create one from Assets > Create > Airball Arena VR > Court Settings.");
                 return;
             }
 

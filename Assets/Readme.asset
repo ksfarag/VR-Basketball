@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Readme
   m_EditorClassIdentifier:
   icon: {fileID: 0}
-  title: VR Basketball
+  title: Airball Arena VR
   sections:
   - heading: Project foundation
     text: Unity 6000.0.58f2. OpenXR, Input System, Android build automation, and
@@ -27,7 +27,7 @@ MonoBehaviour:
     linkText:
     url:
   - heading: Verification
-    text: Use VR Basketball > Automation for tests and Android builds. The setup
+    text: Use Airball Arena VR > Automation for tests and Android builds. The setup
       smoke test is not gameplay coverage; an empty PlayMode suite is incomplete.
       Headset checks are pending.
     linkText:

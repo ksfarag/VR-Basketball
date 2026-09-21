@@ -2,7 +2,7 @@
 
 ## Project open in Unity
 
-Use **VR Basketball > Automation > Run EditMode Tests**, **Run PlayMode Tests**, **Run All Tests**, or **Build Android APK**. Runs are asynchronous: wait for the JSON result, then inspect totals and the console. Test results are in `Logs/Verification/{editmode,playmode}-tests.json` with NUnit XML; the combined status is `Logs/Verification/tests.json`. Build status is `Logs/Verification/quest-build.json`, and the default APK is `Builds/Android/VRBasketball.apk`.
+Use **Airball Arena VR > Automation > Run EditMode Tests**, **Run PlayMode Tests**, **Run All Tests**, or **Build Android APK**. Runs are asynchronous: wait for the JSON result, then inspect totals and the console. Test results are in `Logs/Verification/{editmode,playmode}-tests.json` with NUnit XML; the combined status is `Logs/Verification/tests.json`. Build status is `Logs/Verification/quest-build.json`, and the default APK is `Builds/Android/AirballArenaVR.apk`.
 
 `success` means a completed pass; `failure` is a failed run; `running` is pending; `not_ready` includes an empty suite. The current PlayMode suite is empty. Save the scene before building. The build helper requires Input System only; after changing Active Input Handling, restart Unity.
 

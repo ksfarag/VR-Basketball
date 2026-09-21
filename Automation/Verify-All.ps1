@@ -46,7 +46,7 @@ function Assert-EditorClosed {
         $lockStream = [IO.File]::Open($lockPath, [IO.FileMode]::Open, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
         $lockStream.Dispose()
     } catch {
-        throw 'This project is open in Unity, or its lock is inaccessible. Use the connected Unity MCP and the VR Basketball/Automation/Run All Tests and Build Android APK menus. For this CLI script, save and close the Editor yourself first.'
+        throw 'This project is open in Unity, or its lock is inaccessible. Use the connected Unity MCP and the Airball Arena VR/Automation/Run All Tests and Build Android APK menus. For this CLI script, save and close the Editor yourself first.'
     }
 }
 
@@ -137,7 +137,7 @@ try {
     $binaryVersion = (Get-Item -LiteralPath $UnityPath).VersionInfo.ProductVersion
     if ($binaryVersion -notmatch '^6000\.0\.58f2(?:_|$)') { throw "Unity executable version '$binaryVersion' does not match 6000.0.58f2." }
     Assert-EditorClosed $ProjectPath
-    if (-not $BuildOutput) { $BuildOutput = Join-Path $ProjectPath 'Builds/Android/VRBasketball.apk' }
+    if (-not $BuildOutput) { $BuildOutput = Join-Path $ProjectPath 'Builds/Android/AirballArenaVR.apk' }
     if (-not [IO.Path]::IsPathRooted($BuildOutput)) { $BuildOutput = Join-Path $ProjectPath $BuildOutput }
     $BuildOutput = [IO.Path]::GetFullPath($BuildOutput)
     if ([IO.Path]::GetExtension($BuildOutput) -ne '.apk') { throw 'BuildOutput must name an .apk file.' }

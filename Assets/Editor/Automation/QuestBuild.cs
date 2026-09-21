@@ -19,7 +19,7 @@ namespace VRBasketball.EditorAutomation
     {
         private const string PackageId = "com.vrbasketball.game";
 
-        [MenuItem("VR Basketball/Automation/Build Android APK")]
+        [MenuItem("Airball Arena VR/Automation/Build Android APK")]
         public static void BuildFromMenu()
         {
             Build(null);
@@ -42,6 +42,8 @@ namespace VRBasketball.EditorAutomation
         private static bool Build(string output)
         {
             var summary = new QuestBuildSummary();
+            summary.productName = PlayerSettings.productName;
+            summary.androidVersionCode = PlayerSettings.Android.bundleVersionCode;
             var timer = Stopwatch.StartNew();
             bool success = false;
             try
@@ -168,7 +170,7 @@ namespace VRBasketball.EditorAutomation
 
         private static string ResolveOutput(string output)
         {
-            if (output == null) output = Path.Combine(AutomationReports.ProjectRoot, "Builds", "Android", "VRBasketball.apk");
+            if (output == null) output = Path.Combine(AutomationReports.ProjectRoot, "Builds", "Android", "AirballArenaVR.apk");
             if (string.IsNullOrWhiteSpace(output) || !string.Equals(Path.GetExtension(output), ".apk", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("-buildOutput must point to an .apk file.");
             return Path.GetFullPath(Path.IsPathRooted(output) ? output : Path.Combine(AutomationReports.ProjectRoot, output));

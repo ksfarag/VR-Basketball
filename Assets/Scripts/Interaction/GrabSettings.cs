@@ -6,7 +6,7 @@ namespace VRBasketball
     /// Tuning for picking up, carrying, and throwing a ball. Kept in an asset so the feel
     /// can be adjusted from the Inspector without editing code or the scene.
     /// </summary>
-    [CreateAssetMenu(fileName = "GrabSettings", menuName = "VR Basketball/Grab Settings")]
+    [CreateAssetMenu(fileName = "GrabSettings", menuName = "Airball Arena VR/Grab Settings")]
     public sealed class GrabSettings : ScriptableObject
     {
         [Header("Grab")]

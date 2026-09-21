@@ -26,13 +26,13 @@ namespace VRBasketball.EditorAutomation
             EditorApplication.update += StartNextSuite;
         }
 
-        [MenuItem("VR Basketball/Automation/Run EditMode Tests")]
+        [MenuItem("Airball Arena VR/Automation/Run EditMode Tests")]
         public static void RunEditMode() => Begin("editmode");
 
-        [MenuItem("VR Basketball/Automation/Run PlayMode Tests")]
+        [MenuItem("Airball Arena VR/Automation/Run PlayMode Tests")]
         public static void RunPlayMode() => Begin("playmode");
 
-        [MenuItem("VR Basketball/Automation/Run All Tests")]
+        [MenuItem("Airball Arena VR/Automation/Run All Tests")]
         public static void RunAll() => Begin("editmode", "playmode");
 
         private static void Begin(params string[] suites)

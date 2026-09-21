@@ -50,7 +50,7 @@ namespace VRBasketball.EditorAutomation
             EditorApplication.delayCall += RestoreAfterInterruptedSession;
         }
 
-        [MenuItem("VR Basketball/Desktop XR/Configure Experimental Operator")]
+        [MenuItem("Airball Arena VR/Desktop XR/Configure Experimental Operator")]
         public static void ConfigureFromMenu()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
@@ -68,13 +68,13 @@ namespace VRBasketball.EditorAutomation
             RequireFile(operatorManifest);
             RequireFile(Path.Combine(Path.GetDirectoryName(operatorManifest), "XrApiLayer_METAX_operator.dll"));
             EditorPrefs.SetString(Prefix + "OperatorManifest", Path.GetFullPath(operatorManifest));
-            Debug.Log("Operator layer configured locally. Use VR Basketball > Desktop XR > Play in Simulator for a Simulator session with the Operator.");
+            Debug.Log("Operator layer configured locally. Use Airball Arena VR > Desktop XR > Play in Simulator for a Simulator session with the Operator.");
         }
 
         // Normal Play uses the system OpenXR runtime (for example, Quest Link) unless Meta's
         // Simulator toggle is on. This turns that toggle on for one Play session, adds the
         // Operator layer, and restores both when Play stops.
-        [MenuItem("VR Basketball/Desktop XR/Play in Simulator")]
+        [MenuItem("Airball Arena VR/Desktop XR/Play in Simulator")]
         public static void PlayInSimulator()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
@@ -96,10 +96,10 @@ namespace VRBasketball.EditorAutomation
             EditorApplication.isPlaying = true;
         }
 
-        [MenuItem("VR Basketball/Desktop XR/Play in Simulator", true)]
+        [MenuItem("Airball Arena VR/Desktop XR/Play in Simulator", true)]
         private static bool CanPlayInSimulator() => !EditorApplication.isPlayingOrWillChangePlaymode;
 
-        [MenuItem("VR Basketball/Desktop XR/Show Local Status")]
+        [MenuItem("Airball Arena VR/Desktop XR/Show Local Status")]
         public static void ShowStatus()
         {
             Debug.Log("Desktop XR: normal Play uses the system OpenXR runtime unless Meta's Simulator toggle is on"

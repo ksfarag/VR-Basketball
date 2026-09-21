@@ -152,6 +152,47 @@ namespace VRBasketball.Tests.PlayMode
                 "and must never drive the ball backwards");
         }
 
+        [UnityTest]
+        public IEnumerator AFinalSmallBounceSettlesOnTheFloor()
+        {
+            BuildFloor();
+
+            // Four centimetres is enough for the 0.85 material to rebound visibly, but
+            // low enough that this should be the last hop rather than another dribble.
+            Rigidbody ball = BuildBall(new Vector3(0f, BallRadius + 0.04f, 0f), rollingResistance: true);
+            bool touched = false;
+            int stepsAfterTouch = 0;
+            float lowestAfterTouch = float.PositiveInfinity;
+            float highestAfterTouch = float.NegativeInfinity;
+
+            for (int i = 0; i < 100; i++)
+            {
+                yield return new WaitForFixedUpdate();
+
+                float clearance = ball.position.y - BallRadius;
+                // Unity keeps colliders apart by their contact offsets, so a resting
+                // sphere can be nearly two centimetres above the mathematical plane.
+                if (clearance <= 0.025f)
+                    touched = true;
+                if (touched)
+                {
+                    stepsAfterTouch++;
+                    // Give the solver a few steps to move the sphere out to its normal
+                    // contact separation. That positional correction is not a rebound.
+                    if (stepsAfterTouch <= 5)
+                        continue;
+                    lowestAfterTouch = Mathf.Min(lowestAfterTouch, clearance);
+                    highestAfterTouch = Mathf.Max(highestAfterTouch, clearance);
+                }
+            }
+
+            Assert.IsTrue(touched, "the ball never reached the floor");
+            Assert.Less(highestAfterTouch - lowestAfterTouch, 0.005f,
+                $"the final contact moved from {lowestAfterTouch * 100f:F1} to {highestAfterTouch * 100f:F1} cm clearance instead of settling");
+            Assert.Less(Mathf.Abs(ball.linearVelocity.y), 0.1f,
+                $"the ball was still bouncing vertically at {ball.linearVelocity.y:F2} m/s");
+        }
+
         private static void Roll(Rigidbody ball)
         {
             const float Speed = 4f;

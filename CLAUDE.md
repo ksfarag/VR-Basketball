@@ -1,4 +1,4 @@
-# VR Basketball — project instructions
+# Airball Arena VR — project instructions
 
 Use the agreed item in [Docs/ImplementationPlan.md](Docs/ImplementationPlan.md). Read only the references needed for that item; do not load the entire history log at session start.
 
@@ -16,7 +16,7 @@ Use the agreed item in [Docs/ImplementationPlan.md](Docs/ImplementationPlan.md).
 1. Inspect the current project and preserve unrelated edits. Use Unity MCP for scene/prefab work; save assets through Unity rather than editing serialized YAML or guessing GUIDs.
 2. Reuse before building. Search the installed packages, `Assets/Samples/`, and existing project code for something that already does the job — prefabs, meshes, scripts, or systems — and prefer it over a new implementation. Judge each candidate by what it does against the requirements above, report the verdict, and build only the remaining gap.
 3. Make one small, reviewable change. Let Unity compile, inspect new console errors, and fix issues relevant to the change.
-4. Run meaningful checks. The Editor's **VR Basketball > Automation** menus work while the project is open; command-line Unity verification requires the Editor closed. See [Docs/Automation.md](Docs/Automation.md). An empty test suite or old APK is not a pass.
+4. Run meaningful checks. The Editor's **Airball Arena VR > Automation** menus work while the project is open; command-line Unity verification requires the Editor closed. See [Docs/Automation.md](Docs/Automation.md). An empty test suite or old APK is not a pass.
 5. Add one concise [AI_LOG.md](AI_LOG.md) entry per meaningful work item: decision, change, actual checks, limitations, and human feedback. Update it as evidence arrives. Do not invent prompts, results, or playtests. Keep private context out of the repository. Put personal observations in [Docs/HumanJournal.md](Docs/HumanJournal.md), marking AI-assisted drafts until reviewed.
 6. Leave changes uncommitted unless the human explicitly authorizes Git actions for that change. Never commit builds, recordings, signing material, credentials, or local tool settings.
 

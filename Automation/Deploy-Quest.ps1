@@ -92,7 +92,7 @@ try {
     } else {
         $selected = @($devices | Where-Object { $_.serial -ceq $Serial -and $_.state -eq 'device' })
         if ($selected.Count -ne 1) { throw "Serial '$Serial' is not one connected, authorized device. Check the devices list and authorize USB debugging in the headset." }
-        if (-not $ApkPath) { $ApkPath = Join-Path $ProjectPath 'Builds/Android/VRBasketball.apk' }
+        if (-not $ApkPath) { $ApkPath = Join-Path $ProjectPath 'Builds/Android/AirballArenaVR.apk' }
         if (-not [IO.Path]::IsPathRooted($ApkPath)) { $ApkPath = Join-Path $ProjectPath $ApkPath }
         $ApkPath = (Resolve-Path -LiteralPath $ApkPath).Path
         if ([IO.Path]::GetExtension($ApkPath) -ne '.apk' -or (Get-Item -LiteralPath $ApkPath).Length -eq 0) { throw 'ApkPath must point to a nonempty .apk file.' }

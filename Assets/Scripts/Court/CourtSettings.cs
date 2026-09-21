@@ -11,7 +11,7 @@ namespace VRBasketball
     /// here; they live in the physics material assets the builder assigns, so each value
     /// has one home.
     /// </summary>
-    [CreateAssetMenu(fileName = "CourtSettings", menuName = "VR Basketball/Court Settings")]
+    [CreateAssetMenu(fileName = "CourtSettings", menuName = "Airball Arena VR/Court Settings")]
     public sealed class CourtSettings : ScriptableObject
     {
         [Header("Ring")]
