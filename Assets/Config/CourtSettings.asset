@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00f2a7761250a92478d611b1f77980fe, type: 3}
   m_Name: CourtSettings
   m_EditorClassIdentifier: 
-  rimHeight: 2.7
-  rimInnerRadius: 0.32
-  rimTubeRadius: 0.01
+  rimHeight: 2.8683
+  rimInnerRadius: 0.4205
+  rimTubeRadius: 0.0198
   rimSegments: 24
-  backboardWidth: 1.8
-  backboardHeight: 1.05
-  backboardThickness: 0.05
-  backboardBottomHeight: 2.552
-  rimGapFromBackboard: 0.15
+  backboardWidth: 1.7
+  backboardHeight: 1.12
+  backboardThickness: 0.02
+  backboardBottomHeight: 2.6443
+  rimGapFromBackboard: 0.1371
   courtWidth: 15.24
   courtLength: 15
   baselineToBackboard: 1.2
