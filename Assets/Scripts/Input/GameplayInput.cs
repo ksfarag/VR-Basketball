@@ -11,7 +11,7 @@ namespace VRBasketball
     }
 
     /// <summary>
-    /// Enables the gameplay input actions and reports hold and reset input by hand.
+    /// Enables the gameplay input actions and reports hold, dribble, and reset input.
     /// Controller tracking is handled separately by the rig's TrackedPoseDrivers.
     /// </summary>
     public sealed class GameplayInput : MonoBehaviour
@@ -19,12 +19,15 @@ namespace VRBasketball
         [SerializeField] private InputActionReference holdLeft;
         [SerializeField] private InputActionReference holdRight;
         [SerializeField] private InputActionReference reset;
-        [Tooltip("Log each hold and reset change with the control that caused it.")]
+        [SerializeField] private InputActionReference dribble;
+        [Tooltip("Log each hold, dribble, and reset change with the control that caused it.")]
         [SerializeField] private bool logInput = true;
 
         public event Action<Hand> HoldStarted;
         public event Action<Hand> HoldEnded;
         public event Action ResetPressed;
+        public event Action DribbleStarted;
+        public event Action DribbleEnded;
 
         public bool IsHolding(Hand hand) => HoldAction(hand).IsPressed();
 
@@ -35,11 +38,14 @@ namespace VRBasketball
         /// </summary>
         public bool IsResetting => reset != null && reset.action != null && reset.action.IsPressed();
 
+        /// <summary>Whether the dribble control is down right now.</summary>
+        public bool IsDribbling => dribble != null && dribble.action != null && dribble.action.IsPressed();
+
         private InputAction HoldAction(Hand hand) => (hand == Hand.Left ? holdLeft : holdRight).action;
 
         private void OnEnable()
         {
-            if (holdLeft == null || holdRight == null || reset == null)
+            if (holdLeft == null || holdRight == null || reset == null || dribble == null)
             {
                 Debug.LogError("GameplayInput is missing an input action reference.", this);
                 enabled = false;
@@ -51,14 +57,17 @@ namespace VRBasketball
             holdRight.action.performed += OnHoldRight;
             holdRight.action.canceled += OnHoldRight;
             reset.action.performed += OnReset;
+            dribble.action.performed += OnDribble;
+            dribble.action.canceled += OnDribble;
             holdLeft.action.Enable();
             holdRight.action.Enable();
             reset.action.Enable();
+            dribble.action.Enable();
         }
 
         private void OnDisable()
         {
-            if (holdLeft == null || holdRight == null || reset == null)
+            if (holdLeft == null || holdRight == null || reset == null || dribble == null)
                 return;
 
             holdLeft.action.performed -= OnHoldLeft;
@@ -66,9 +75,12 @@ namespace VRBasketball
             holdRight.action.performed -= OnHoldRight;
             holdRight.action.canceled -= OnHoldRight;
             reset.action.performed -= OnReset;
+            dribble.action.performed -= OnDribble;
+            dribble.action.canceled -= OnDribble;
             holdLeft.action.Disable();
             holdRight.action.Disable();
             reset.action.Disable();
+            dribble.action.Disable();
         }
 
         private void OnHoldLeft(InputAction.CallbackContext context) => ReportHold(Hand.Left, context);
@@ -91,6 +103,17 @@ namespace VRBasketball
             if (logInput)
                 Debug.Log($"[GameplayInput] Reset pressed ({context.control.path})", this);
             ResetPressed?.Invoke();
+        }
+
+        private void OnDribble(InputAction.CallbackContext context)
+        {
+            bool pressed = context.performed;
+            if (logInput)
+                Debug.Log($"[GameplayInput] Dribble {(pressed ? "pressed" : "released")} ({context.control.path})", this);
+            if (pressed)
+                DribbleStarted?.Invoke();
+            else
+                DribbleEnded?.Invoke();
         }
     }
 }

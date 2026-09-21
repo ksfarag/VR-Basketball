@@ -7,7 +7,9 @@ namespace VRBasketball
     /// One hand's grabbing, carrying, and throwing. Its own transform is the hand pose, so
     /// it sits under the rig's hand anchor. Poses are sampled where the rig refreshes them,
     /// grab and release transitions are resolved once per physics step, and a carried ball
-    /// is driven by Rigidbody motion so it still collides while held.
+    /// is driven by Rigidbody motion so it still collides while held. The same carry
+    /// dribbles the ball: while the dribble control is down, the ball the hand is carrying
+    /// is bounced off the floor below it and back into the hand.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class HandGrabber : MonoBehaviour
@@ -24,9 +26,13 @@ namespace VRBasketball
         [Tooltip("Log each grab and release with the resulting throw.")]
         [SerializeField] private bool logGrabs = true;
 
+        private static readonly RaycastHit[] floorHits = new RaycastHit[8];
+
+        private readonly DribbleMotion dribble = new DribbleMotion();
         private HandMotionEstimator motion;
         private Ball held;
         private bool holdRequested;
+        private bool dribbleRequested;
         private Vector3 holdOffset;
         private Quaternion holdRotation;
         private Vector3 throwLinear;
@@ -68,6 +74,9 @@ namespace VRBasketball
 
         public bool IsTracked => tracked == null || tracked.action == null || tracked.action.IsPressed();
 
+        /// <summary>True while the ball this hand carries is out of it on a bounce.</summary>
+        public bool IsDribbling => IsCarrying && dribble.IsBouncing;
+
         /// <summary>Asks to pick up a ball. Acted on at the next physics step.</summary>
         public void BeginHold() => holdRequested = true;
 
@@ -84,6 +93,16 @@ namespace VRBasketball
             holdRequested = false;
             MeasureThrow(out throwLinear, out throwAngular);
         }
+
+        /// <summary>
+        /// Asks to dribble the ball this hand carries. It bounces for as long as the
+        /// request stands, and holds none of its own: a hand with no ball ignores it until it
+        /// picks one up.
+        /// </summary>
+        public void BeginDribble() => dribbleRequested = true;
+
+        /// <summary>Asks to stop dribbling. A bounce under way finishes in the hand.</summary>
+        public void EndDribble() => dribbleRequested = false;
 
         /// <summary>
         /// Takes a ball being delivered straight into this hand, without the usual reach
@@ -116,6 +135,8 @@ namespace VRBasketball
 
             motion = new HandMotionEstimator(settings.VelocitySamples);
             holdRequested = false;
+            dribbleRequested = false;
+            dribble.Stop();
             throwLinear = Vector3.zero;
             throwAngular = Vector3.zero;
             supportBlend = 0f;
@@ -128,6 +149,8 @@ namespace VRBasketball
             {
                 input.HoldStarted += OnHoldStarted;
                 input.HoldEnded += OnHoldEnded;
+                input.DribbleStarted += BeginDribble;
+                input.DribbleEnded += EndDribble;
             }
             else
             {
@@ -147,6 +170,8 @@ namespace VRBasketball
             {
                 input.HoldStarted -= OnHoldStarted;
                 input.HoldEnded -= OnHoldEnded;
+                input.DribbleStarted -= BeginDribble;
+                input.DribbleEnded -= EndDribble;
             }
 
             if (held != null)
@@ -156,6 +181,8 @@ namespace VRBasketball
                 tracked.action.Disable();
 
             holdRequested = false;
+            dribbleRequested = false;
+            dribble.Stop();
             motion?.Clear();
         }
 
@@ -216,6 +243,7 @@ namespace VRBasketball
             held = ball;
             supportBlend = 0f;
             wasSupported = false;
+            dribble.Stop();
             Quaternion handToWorld = Quaternion.Inverse(transform.rotation);
             holdOffset = handToWorld * (ball.Body.position - transform.position);
             holdRotation = handToWorld * ball.Body.rotation;
@@ -249,6 +277,7 @@ namespace VRBasketball
 
             Rigidbody body = held.Body;
             Vector3 target = CarryTarget();
+            target += Vector3.down * DribbleDrop(target, deltaTime);
             Quaternion targetRotation = transform.rotation * holdRotation;
 
             Vector3 linear = (target - body.position) / deltaTime;
@@ -263,7 +292,19 @@ namespace VRBasketball
             linear = Vector3.zero;
             angular = Vector3.zero;
 
-            if (held == null || !motion.TryGetVelocity(settings.VelocityWindow, settings.ReleaseBias, out Vector3 handLinear, out Vector3 handAngular))
+            if (held == null)
+                return;
+
+            // Out on a bounce the ball is not in the hand, so letting go leaves it moving the
+            // way it was rather than throwing it with the hand's swing.
+            if (IsDribbling)
+            {
+                linear = held.Body.linearVelocity;
+                angular = held.Body.angularVelocity;
+                return;
+            }
+
+            if (!motion.TryGetVelocity(settings.VelocityWindow, settings.ReleaseBias, out Vector3 handLinear, out Vector3 handAngular))
                 return;
 
             // A ball held in one hand swings with the wrist, so the wrist adds to the
@@ -291,6 +332,56 @@ namespace VRBasketball
                 Debug.Log($"[HandGrabber] {hand} let go of {ball.name} ({reason}); the other hand still has it", this);
             else
                 Debug.Log($"[HandGrabber] {hand} released {ball.name} ({reason}) at {linear.magnitude:F2} m/s, {angular.magnitude:F2} rad/s", this);
+        }
+
+        // How far below where the hand holds it the dribble puts the ball this step. The
+        // floor is looked for under the hand every step, so the ball follows a hand that
+        // moves and always comes back to where the hand is now.
+        private float DribbleDrop(Vector3 inHand, float deltaTime)
+        {
+            // Dribbling is one hand's. A second hand taking hold ends it where the ball is.
+            if (held.Support != null)
+            {
+                dribble.Stop();
+                return 0f;
+            }
+
+            if (!dribble.IsBouncing && !dribbleRequested)
+                return 0f;
+
+            if (!TryFindFloor(inHand, out float depth))
+            {
+                dribble.Stop();
+                return 0f;
+            }
+
+            dribble.Advance(deltaTime, settings.DribblePeriod, dribbleRequested);
+            return dribble.Drop * depth;
+        }
+
+        // How far the ball, as held, can fall before it meets something. The cast is the
+        // ball's own size, so the answer is where it would touch down, not where its centre
+        // would reach.
+        private bool TryFindFloor(Vector3 inHand, out float depth)
+        {
+            depth = float.PositiveInfinity;
+            int count = Physics.SphereCastNonAlloc(
+                inHand, held.Radius, Vector3.down, floorHits, settings.DribbleReach,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < count; i++)
+            {
+                RaycastHit hit = floorHits[i];
+
+                // The ball itself lies along the way down, and anything touching it where
+                // it is held is beside it rather than below it.
+                if (hit.distance <= 0f || hit.rigidbody == held.Body)
+                    continue;
+
+                depth = Mathf.Min(depth, hit.distance);
+            }
+
+            return !float.IsPositiveInfinity(depth);
         }
 
         // Eases the carried point between this hand and the midpoint of both hands, so

@@ -49,6 +49,12 @@ namespace VRBasketball
         [Tooltip("Largest release spin, in radians per second.")]
         [SerializeField, Range(0f, 100f)] private float maxThrowSpin = 30f;
 
+        [Header("Dribble")]
+        [Tooltip("How long one bounce takes, from leaving the hand to coming back into it, in seconds.")]
+        [SerializeField, Range(0.25f, 1.5f)] private float dribblePeriod = 0.5f;
+        [Tooltip("How far the ball may fall to reach the floor, in metres. With nothing that close underneath it, the ball stays in the hand.")]
+        [SerializeField, Range(0.3f, 3f)] private float dribbleReach = 2f;
+
         public float GrabReach => grabReach;
         public bool DropOnTrackingLoss => dropOnTrackingLoss;
         public float HoldDistance => holdDistance;
@@ -64,5 +70,7 @@ namespace VRBasketball
         public float ThrowSpinScale => throwSpinScale;
         public float MaxThrowSpeed => maxThrowSpeed;
         public float MaxThrowSpin => maxThrowSpin;
+        public float DribblePeriod => dribblePeriod;
+        public float DribbleReach => dribbleReach;
     }
 }

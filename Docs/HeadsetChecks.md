@@ -19,6 +19,7 @@ Before device actions, enumerate connected devices and select the intended seria
 - Either hand can reach, pick up, hold, and release the ball.
 - A ball has one owner at a time; transfers or simultaneous input do not duplicate it.
 - A stationary release drops the ball; a deliberate throw produces controllable speed and direction.
+- Holding the dribble control bounces the ball off the floor and back into the hand at a rhythm that feels like dribbling, and letting go leaves the ball in the hand.
 - Throws respond across gentle, quick, and short arm motions without unexpected velocity spikes.
 - Floor, rim, and backboard contacts look and sound appropriate; the ball does not routinely pass through geometry.
 

@@ -3475,6 +3475,7 @@ MonoBehaviour:
   holdLeft: {fileID: 2834555407090440455, guid: b9e5a785bd3e64944ade7759c93be638, type: 3}
   holdRight: {fileID: -6285634329372440859, guid: b9e5a785bd3e64944ade7759c93be638, type: 3}
   reset: {fileID: 7047890726076549576, guid: b9e5a785bd3e64944ade7759c93be638, type: 3}
+  dribble: {fileID: -3016055056984815060, guid: b9e5a785bd3e64944ade7759c93be638, type: 3}
   logInput: 1
 --- !u!114 &1019010637
 MonoBehaviour:
